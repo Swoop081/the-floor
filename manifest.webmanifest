@@ -1,0 +1,9 @@
+{
+  "name":"Take The Tile — Voice Duel",
+  "short_name":"Take The Tile",
+  "start_url":"./",
+  "display":"standalone",
+  "background_color":"#080b2c",
+  "theme_color":"#080b2c",
+  "orientation":"portrait"
+}
