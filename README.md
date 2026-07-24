@@ -1,20 +1,19 @@
-# Take the Tile v0.3.0 Alpha
+# Take the Tile v0.4.0 Showtime Alpha
 
-GitHub Pages-ready browser game. Keep `.nojekyll` in the repository root.
+A mobile-first local multiplayer territory game inspired by studio floor quiz formats.
 
 ## Added in this build
-- Game-show start screen with version number and Start Game button.
-- Duel 1v1, 4-player, 6-player, 8-player and 10-player modes.
-- Player naming and colour selection.
-- A 200-category catalogue organised into 10 genres.
-- Category draft flow. Categories marked READY have playable local photo packs.
-- 3D-style responsive territory board.
-- Random challenger selection each round.
-- Only edge-touching enemy tiles can be challenged.
-- Duel winner takes all territory owned by the defeated player.
-- Existing iPhone speech-recognition lifecycle retained.
-- Whole-second 45-to-0 clocks and face-down first card retained.
-- First Wikimedia Commons animal and landmark photos downloaded locally and voice-mapped.
+- 1–20 player support (1 player is solo practice)
+- Fictional studio host Max Sterling
+- Full Randomizer presentation
+- Winner choice: Stay & Play or Return to Floor
+- TV-style category inheritance: the survivor carries the category that was not played
+- Mixed prompt engine: real photos, words, questions, maths and Roman numerals
+- New playable packs: Countries, Capital Cities, Science, World History, Sport, Entertainment, Opposites, Roman Numerals, five maths levels
+- Responsive near-3D floor layouts for every player count
+- Existing iPhone voice-recognition safeguards retained
 
-## Content status
-The 200 category names and genre structure are installed. This alpha contains 12 READY photo packs built from the existing 50-food library plus two Wikimedia Commons sampler packs. Remaining categories are visible as planned content packs and are intentionally locked until their local images and voice aliases are added and checked.
+## Rules
+A random active player challenges an orthogonally adjacent territory using the defender's category. Each player has a separate 45-second clock and only the active player's clock runs. Correct answers hand control to the opponent. Passing costs three seconds. The loser is eliminated and all territory transfers to the winner. The winner may challenge again or return to the floor for a new Randomizer selection.
+
+Solo Practice uses a single 60-second clock.
