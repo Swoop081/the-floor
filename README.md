@@ -1,19 +1,15 @@
-# Take the Tile v0.4.0 Showtime Alpha
+# Take the Tile v0.4.1 — Landscape Content Alpha
 
-A mobile-first local multiplayer territory game inspired by studio floor quiz formats.
+Landscape-first mobile build based on v0.4.0.
 
-## Added in this build
-- 1–20 player support (1 player is solo practice)
-- Fictional studio host Max Sterling
-- Full Randomizer presentation
-- Winner choice: Stay & Play or Return to Floor
-- TV-style category inheritance: the survivor carries the category that was not played
-- Mixed prompt engine: real photos, words, questions, maths and Roman numerals
-- New playable packs: Countries, Capital Cities, Science, World History, Sport, Entertainment, Opposites, Roman Numerals, five maths levels
-- Responsive near-3D floor layouts for every player count
-- Existing iPhone voice-recognition safeguards retained
+## Added
+- Landscape-optimised layouts across start, setup, category draft, board and duel screens.
+- Portrait rotation notice on phones.
+- Country Flags image category with locally stored flag files.
+- Broader playable mix with less food duplication.
+- New text/question packs: Movies, TV Shows, Famous Movie Quotes, Space, Car Brands & Models, Types of Cars, Famous Logos, Cartoons, Music, Human Body and General Knowledge.
+- Existing maths, Roman numerals, geography, science, history, sport and voice-recognition systems preserved.
 
-## Rules
-A random active player challenges an orthogonally adjacent territory using the defender's category. Each player has a separate 45-second clock and only the active player's clock runs. Correct answers hand control to the opponent. Passing costs three seconds. The loser is eliminated and all territory transfers to the winner. The winner may challenge again or return to the floor for a new Randomizer selection.
-
-Solo Practice uses a single 60-second clock.
+## Notes
+- iPhone browsers do not reliably allow a web page to force device orientation, so the game provides a full-screen rotate prompt in portrait and is sized for landscape.
+- Install by replacing the repository contents while preserving the root `.nojekyll` file.

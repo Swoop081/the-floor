@@ -76,48 +76,93 @@ const ENTERTAINMENT_Q=makeQuestions([
 ['Who is the wizard hero of Hogwarts?',['harry potter']],['What is the name of Batman’s city?',['gotham','gotham city']],['Which toy cowboy appears in Toy Story?',['woody']],['What is Superman’s home planet?',['krypton']],['Which princess has a pet tiger named Rajah?',['jasmine','princess jasmine']],['Who lives in a pineapple under the sea?',['spongebob','spongebob squarepants']],['Which hero carries a shield with a star?',['captain america']],['What is the name of Shrek’s wife?',['fiona','princess fiona']],['Which film series features the DeLorean time machine?',['back to the future']],['Which cartoon cat chases Jerry?',['tom']],['Which Disney character has a long wooden nose?',['pinocchio']]]);
 const OPPOSITES=[['HOT','cold'],['UP','down'],['FAST','slow'],['DAY','night'],['BIG','small'],['OLD','young'],['OPEN','closed'],['HAPPY','sad'],['LIGHT','dark'],['EARLY','late'],['FULL','empty'],['HIGH','low'],['WET','dry'],['LEFT','right'],['BEGIN','end'],['BUY','sell'],['PUSH','pull'],['IN','out'],['ABOVE','below'],['WIN','lose']].map(([p,a])=>makeText(p,[a]));
 
+
+const FLAG_ITEMS=[
+['assets/flags/australia.png',['australia','australian flag']],
+['assets/flags/germany.png',['germany','german flag']],
+['assets/flags/spain.png',['spain','spanish flag']],
+['assets/flags/brazil.png',['brazil','brazilian flag']],
+['assets/flags/argentina.png',['argentina','argentinian flag','argentine flag']],
+['assets/flags/norway.png',['norway','norwegian flag']],
+['assets/flags/finland.png',['finland','finnish flag']]
+];
+const MOVIES_Q=makeQuestions([
+['Which movie features a shark terrorising Amity Island?',['jaws']],['Which film follows a boxer named Rocky Balboa?',['rocky']],['Which movie features a theme park filled with cloned dinosaurs?',['jurassic park']],['Which movie has a time-travelling DeLorean?',['back to the future']],['Which film features the ship called Titanic?',['titanic']],['Which movie follows a young lion named Simba?',['the lion king','lion king']],['Which film features a boxer robot named Atom?',['real steel']],['Which movie features a friendly alien who wants to phone home?',['et','e t','e.t.']],['Which film follows a giant ape in New York?',['king kong']],['Which film series features the character Indiana Jones?',['indiana jones']]
+]);
+const TV_Q=makeQuestions([
+['Which sitcom features Ross, Rachel, Monica, Chandler, Joey and Phoebe?',['friends']],['Which animated series follows the Simpson family?',['the simpsons','simpsons']],['Which drama follows chemistry teacher Walter White?',['breaking bad']],['Which series is set in the fictional continent of Westeros?',['game of thrones']],['Which sitcom is set at Dunder Mifflin?',['the office']],['Which series follows a time traveller called the Doctor?',['doctor who']],['Which show features Eleven and the Upside Down?',['stranger things']],['Which sitcom follows the Banks family in Bel-Air?',['the fresh prince of bel air','fresh prince']],['Which animated show features Eric Cartman?',['south park']],['Which series follows detectives Benson and Stabler?',['law and order special victims unit','law and order svu','svu']]
+]);
+const MOVIE_QUOTES=makeQuestions([
+['“May the Force be with you.” Name the film series.',['star wars']],['“I’ll be back.” Name the film.',['the terminator','terminator']],['“You can’t handle the truth!” Name the film.',['a few good men']],['“There’s no place like home.” Name the film.',['the wizard of oz','wizard of oz']],['“Why so serious?” Name the film.',['the dark knight']],['“To infinity and beyond!” Name the film.',['toy story']],['“Just keep swimming.” Name the film.',['finding nemo']],['“Nobody puts Baby in a corner.” Name the film.',['dirty dancing']],['“Houston, we have a problem.” Name the film.',['apollo 13']],['“I see dead people.” Name the film.',['the sixth sense','sixth sense']]
+]);
+const SPACE_Q=makeQuestions([
+['Which planet is closest to the Sun?',['mercury']],['Which planet is famous for its rings?',['saturn']],['Which planet is known as the Red Planet?',['mars']],['What is Earth’s natural satellite?',['moon','the moon']],['What galaxy contains our solar system?',['milky way','the milky way']],['What is the largest planet in our solar system?',['jupiter']],['Which planet is tilted on its side?',['uranus']],['What is a rock from space that reaches Earth called?',['meteorite']],['What force keeps planets in orbit?',['gravity']],['What is the closest star to Earth?',['sun','the sun']],['Which dwarf planet was once classed as the ninth planet?',['pluto']],['What is a group of stars forming a pattern called?',['constellation']]
+]);
+const CARS_Q=makeQuestions([
+['Which car maker produces the Mustang?',['ford']],['Which car maker produces the Corolla?',['toyota']],['Which brand uses a three-pointed star badge?',['mercedes benz','mercedes']],['Which Italian brand makes the 911?',['porsche']],['Which brand makes the Civic?',['honda']],['Which electric car company makes the Model 3?',['tesla']],['Which luxury brand makes the Phantom?',['rolls royce']],['Which Italian sports-car brand uses a prancing horse?',['ferrari']],['Which brand produces the Golf?',['volkswagen']],['Which Australian car brand produced the Commodore?',['holden']],['Which Japanese brand makes the Skyline?',['nissan']],['Which British brand makes the Mini?',['mini','mini cooper']]
+]);
+const CAR_TYPES=makeQuestions([
+['A vehicle designed to carry goods in an open rear bed is called what?',['pickup truck','ute','utility vehicle']],['A car with a roof that folds down is called what?',['convertible','cabriolet']],['A long luxury passenger car is called what?',['limousine','limo']],['A vehicle combining passenger space with off-road height is called what?',['suv','sport utility vehicle']],['A two-door sporty car is called what?',['coupe']],['A family car with an extended cargo area is called what?',['station wagon','estate car','wagon']],['A small city car with a rear hatch is called what?',['hatchback']],['A vehicle powered only by batteries is called what?',['electric car','electric vehicle','ev']]
+]);
+const GENERAL_Q=makeQuestions([
+['How many days are in a leap year?',['366','three hundred and sixty six']],['What colour do blue and yellow make?',['green']],['What is the opposite of north?',['south']],['How many sides does a hexagon have?',['six','6']],['Which month has the fewest days?',['february']],['What is the largest ocean?',['pacific ocean','pacific']],['What is the currency of Japan?',['yen']],['What language is mainly spoken in Brazil?',['portuguese']],['What is the tallest animal?',['giraffe']],['What is a baby dog called?',['puppy']],['Which instrument has black and white keys?',['piano']],['How many continents are there?',['seven','7']]
+]);
+const LOGOS_Q=makeQuestions([
+['Which company uses a bitten apple logo?',['apple']],['Which sports brand uses a swoosh?',['nike']],['Which fast-food chain uses golden arches?',['mcdonalds','mcdonald’s']],['Which car brand uses four interlocking rings?',['audi']],['Which company uses a red play button logo?',['youtube']],['Which coffee chain uses a green siren logo?',['starbucks']],['Which social platform was formerly represented by a blue bird?',['twitter','x']],['Which brand uses three stripes?',['adidas']],['Which streaming service uses a red N?',['netflix']],['Which game console brand uses the letters PS?',['playstation','sony playstation']]
+]);
+const CARTOONS_Q=makeQuestions([
+['Which cartoon mouse is Disney’s mascot?',['mickey mouse','mickey']],['Which cartoon rabbit says “What’s up, Doc?”',['bugs bunny','bugs']],['Which blue hedgehog is a video-game and cartoon hero?',['sonic','sonic the hedgehog']],['Which cartoon family lives at 742 Evergreen Terrace?',['the simpsons','simpsons']],['Which yellow sponge lives in Bikini Bottom?',['spongebob squarepants','spongebob']],['Which mystery-solving dog travels in the Mystery Machine?',['scooby doo','scooby-doo','scooby']],['Which sailor gains strength from spinach?',['popeye']],['Which cat constantly chases Jerry?',['tom']],['Which cartoon bear loves honey?',['winnie the pooh','pooh']],['Which green ogre stars in an animated film series?',['shrek']]
+]);
+const MUSIC_Q=makeQuestions([
+['Which band recorded “Bohemian Rhapsody”?',['queen']],['Which singer was known as the King of Pop?',['michael jackson']],['Which group featured John, Paul, George and Ringo?',['the beatles','beatles']],['Which singer recorded “Rolling in the Deep”?',['adele']],['Which Australian band recorded “Highway to Hell”?',['acdc','a c d c']],['Which singer is nicknamed the Material Girl?',['madonna']],['Which instrument normally has six strings?',['guitar']],['Which singer recorded “Shake It Off”?',['taylor swift']],['Which band featured Freddie Mercury?',['queen']],['Which singer is known as the Boss?',['bruce springsteen','springsteen']]
+]);
+const HUMAN_BODY_Q=makeQuestions([
+['Which organ pumps blood?',['heart']],['Which organs help you breathe?',['lungs']],['What is the largest organ of the body?',['skin']],['Which bone protects the brain?',['skull']],['How many chambers does the human heart have?',['four','4']],['Which part of the eye controls how much light enters?',['pupil']],['What connects muscle to bone?',['tendon']],['Which organ filters blood and produces urine?',['kidney','kidneys']],['Which body system includes the brain and spinal cord?',['nervous system']],['Which blood cells carry oxygen?',['red blood cells','red cells']]
+]);
 const READY_CATEGORIES=[
 {id:'food',name:'Common Foods',genre:'Life',items:FOOD_ITEMS},
 {id:'fruit',name:'Fruit',genre:'Life',items:pick('grapes','orange','kiwi','pear','pineapple','banana','coconut','rambutan','dragon-fruit','fig','lime','fruit-salad')},
-{id:'tropical-fruit',name:'Tropical Fruit',genre:'Life',items:pick('pineapple','banana','coconut','rambutan','dragon-fruit','lime','avocado')},
-{id:'orchard-fruit',name:'Orchard Fruit',genre:'Life',items:pick('orange','kiwi','pear','fig','lime','grapes')},
 {id:'vegetables',name:'Vegetables',genre:'Life',items:pick('mushroom','avocado','eggplant','bell-pepper','spring-onion','potato','tomato','onion','zucchini','black-olives')},
-{id:'root-bulb',name:'Root & Bulb Vegetables',genre:'Life',items:pick('potato','onion','spring-onion')},
 {id:'fast-food',name:'Fast Food',genre:'Life',items:pick('pizza','chicken-wings','burger','sandwich','french-fries','hot-dog')},
-{id:'pizza-burgers',name:'Pizza & Burgers',genre:'Life',items:pick('pizza','burger','french-fries','hot-dog','chicken-wings')},
-{id:'sandwiches',name:'Sandwiches',genre:'Life',items:pick('sandwich','brown-sandwich','hot-dog','burger')},
-{id:'bakery',name:'Bakery',genre:'Life',items:pick('croissant','bread','baguette')},
-{id:'bread-pastries',name:'Bread & Pastries',genre:'Life',items:pick('croissant','croissants','bread','baguette')},
-{id:'meals',name:'Meals',genre:'Life',items:pick('pizza','sushi','steak','burger','sandwich','roast-chicken','tomato-soup','pasta','pasta-salad')},
-{id:'italian-food',name:'Italian Food',genre:'Life',items:pick('pizza','pasta','pasta-salad','tomato-soup','tomato')},
-{id:'asian-food',name:'Asian Food',genre:'Life',items:pick('sushi','mixed-sushi','spring-onion','rambutan','dragon-fruit')},
-{id:'meat-seafood',name:'Meat & Seafood',genre:'Life',items:pick('chicken','shellfish','steak','pork-chop','mussels','sushi')},
-{id:'seafood',name:'Seafood',genre:'Life',items:pick('shellfish','mussels','sushi','mixed-sushi')},
-{id:'meat-dishes',name:'Meat Dishes',genre:'Life',items:pick('chicken-wings','steak','roast-chicken','pork-chop','burger')},
-{id:'breakfast',name:'Breakfast Foods',genre:'Life',items:pick('eggs','croissant','bread','baguette','coffee-beans','fruit-salad')},
-{id:'snacks',name:'Snacks',genre:'Life',items:pick('french-fries','chicken-wings','walnuts','hazelnuts','fruit-salad','cheese-platter')},
-{id:'healthy-foods',name:'Healthy Foods',genre:'Life',items:pick('grapes','avocado','orange','kiwi','pear','banana','eggplant','bell-pepper','tomato','zucchini','walnuts','hazelnuts','fruit-salad','lime')},
-{id:'ingredients',name:'Cooking Ingredients',genre:'Life',items:pick('tomato','onion','spring-onion','bell-pepper','mushroom','eggplant','potato','black-olives','cheese')},
-{id:'nuts',name:'Nuts',genre:'Nature',items:pick('walnuts','hazelnuts')},
-{id:'fresh-produce',name:'Fresh Produce',genre:'Nature',items:pick('grapes','mushroom','avocado','orange','kiwi','pear','pineapple','banana','coconut','eggplant','rambutan','bell-pepper','spring-onion','dragon-fruit','potato','tomato','fig','onion','zucchini','lime')},
-{id:'food-mix',name:'Food Mix',genre:'Pop Culture',items:FOOD_ITEMS.filter((_,i)=>i%2===0)},
-{id:'animals-sample',name:'Animals — Commons Sample',genre:'Science',items:[['assets/commons/animals/elephant.jpg',['elephant','african elephant']]]},
-{id:'landmarks-sample',name:'Landmarks — Commons Sample',genre:'Geography',items:[['assets/commons/landmarks/taj-mahal.jpg',['taj mahal','the taj mahal']]]},
-{id:'capitals',name:'Capital Cities',genre:'Geography',items:CAPITALS},{id:'countries',name:'Countries',genre:'Geography',items:COUNTRIES},
-{id:'science-trivia',name:'Science',genre:'Science',items:SCIENCE_Q},{id:'history-trivia',name:'World History',genre:'History',items:HISTORY_Q},{id:'sport-trivia',name:'Sport',genre:'Sport',items:SPORT_Q},{id:'entertainment-trivia',name:'Entertainment',genre:'Entertainment',items:ENTERTAINMENT_Q},
-{id:'roman',name:'Roman Numerals',genre:'History',items:ROMAN_ITEMS},{id:'maths-easy',name:'Maths — Easy',genre:'Science',items:mathPack('easy',40)},{id:'maths-medium',name:'Maths — Medium',genre:'Science',items:mathPack('medium',40)},{id:'times-tables',name:'Times Tables',genre:'Science',items:mathPack('times',50)},{id:'division',name:'Division',genre:'Science',items:mathPack('division',40)},{id:'maths-hard',name:'Maths — Hard',genre:'Science',items:mathPack('hard',35)},{id:'opposites',name:'Opposites',genre:'Life',items:OPPOSITES}
+{id:'flags',name:'Country Flags',genre:'Geography',items:FLAG_ITEMS},
+{id:'capitals',name:'Capital Cities',genre:'Geography',items:CAPITALS},
+{id:'countries',name:'Countries',genre:'Geography',items:COUNTRIES},
+{id:'landmarks-sample',name:'World Landmarks',genre:'Geography',items:[['assets/commons/landmarks/taj-mahal.jpg',['taj mahal','the taj mahal']]]},
+{id:'space',name:'Space',genre:'Science',items:SPACE_Q},
+{id:'science-trivia',name:'Science',genre:'Science',items:SCIENCE_Q},
+{id:'human-body',name:'Human Body',genre:'Science',items:HUMAN_BODY_Q},
+{id:'animals-sample',name:'Animals',genre:'Nature',items:[['assets/commons/animals/elephant.jpg',['elephant','african elephant']]]},
+{id:'cars',name:'Car Brands & Models',genre:'Life',items:CARS_Q},
+{id:'car-types',name:'Types of Cars',genre:'Life',items:CAR_TYPES},
+{id:'movies',name:'Movies',genre:'Entertainment',items:MOVIES_Q},
+{id:'tv-shows',name:'TV Shows',genre:'Entertainment',items:TV_Q},
+{id:'movie-quotes',name:'Famous Movie Quotes',genre:'Entertainment',items:MOVIE_QUOTES},
+{id:'entertainment-trivia',name:'Entertainment',genre:'Entertainment',items:ENTERTAINMENT_Q},
+{id:'logos',name:'Famous Logos',genre:'Pop Culture',items:LOGOS_Q},
+{id:'cartoons',name:'Cartoons',genre:'Cartoons',items:CARTOONS_Q},
+{id:'music',name:'Music',genre:'Music',items:MUSIC_Q},
+{id:'history-trivia',name:'World History',genre:'History',items:HISTORY_Q},
+{id:'sport-trivia',name:'Sport',genre:'Sport',items:SPORT_Q},
+{id:'general',name:'General Knowledge',genre:'Life',items:GENERAL_Q},
+{id:'roman',name:'Roman Numerals',genre:'History',items:ROMAN_ITEMS},
+{id:'maths-easy',name:'Maths — Easy',genre:'Science',items:mathPack('easy',40)},
+{id:'maths-medium',name:'Maths — Medium',genre:'Science',items:mathPack('medium',40)},
+{id:'times-tables',name:'Times Tables',genre:'Science',items:mathPack('times',50)},
+{id:'division',name:'Division',genre:'Science',items:mathPack('division',40)},
+{id:'maths-hard',name:'Maths — Hard',genre:'Science',items:mathPack('hard',35)},
+{id:'opposites',name:'Opposites',genre:'Life',items:OPPOSITES}
 ];
 const GENRE_CATALOG={
-'Entertainment':['Entertainment','Movies','TV Shows','Actors','Actresses','Sitcoms','Drama Series','Reality TV','Game Shows','Movie Characters','Famous Directors','Film Franchises','Streaming Shows','Musicals','Movie Posters','Award Winners','Action Movies','Comedy Movies','Horror Movies','Science Fiction','Fantasy Worlds'],
-'Geography':['Countries','Capital Cities','Capital Cities','World Flags','World Landmarks','European Cities','Asian Cities','African Countries','South American Countries','US States','Australian Cities','Islands','Mountains','Rivers','Lakes','Deserts','National Parks','World Maps','Famous Bridges','Airports','Skylines'],
-'Science':['Maths — Easy','Maths — Medium','Times Tables','Division','Maths — Hard','Science','Animals','Birds','Fish','Insects','Dinosaurs','Planets','Space Objects','Human Body','Chemistry','Physics','Weather','Plants','Trees','Flowers','Reptiles','Mammals','Sea Life','Medical Equipment','Scientists','Lab Equipment'],
-'History':['Roman Numerals','World History','Ancient Egypt','Ancient Rome','Ancient Greece','World War I','World War II','Kings','Queens','World Leaders','Explorers','Inventors','Historic Buildings','Ancient Civilisations','Famous Battles','Historical Clothing','Presidents','Prime Ministers','Archaeology','Medieval Life','The Renaissance','Industrial Revolution'],
-'Sport':['Sport','Football Clubs','Soccer Players','Basketball','Tennis','Golf','Cricket','Rugby','Baseball','Formula One','Olympic Sports','Sports Equipment','Stadiums','Combat Sports','Wrestling','Swimming','Athletics','Cycling','Winter Sports','Motorsport','Team Logos'],
-'Pop Culture':['Food Mix','Brands','Logos','Video Games','Game Consoles','Superheroes','Villains','Anime','Internet Culture','Social Media','Memes','Famous Couples','Celebrities','Fashion Brands','Toys','Board Games','Comic Characters','Famous Hairstyles','Awards','Catchphrases','Reality Stars'],
-'Cartoons':['Disney Characters','Pixar Characters','Looney Tunes','Nickelodeon','Cartoon Network','Classic Cartoons','Anime Characters','Animated Movies','Cartoon Animals','Superhero Cartoons','TV Animation','Comic Strips','Children’s TV','Animated Villains','Princesses','Sidekicks','Robots','Fantasy Creatures','Cartoon Families','Animated Objects'],
-'Life':['Opposites','Common Foods','Fruit','Tropical Fruit','Orchard Fruit','Vegetables','Root & Bulb Vegetables','Fast Food','Pizza & Burgers','Sandwiches','Bakery','Bread & Pastries','Meals','Italian Food','Asian Food','Meat & Seafood','Seafood','Meat Dishes','Breakfast Foods','Snacks','Healthy Foods'],
-'Nature':['Nuts','Fresh Produce','Wild Animals','Australian Animals','Farm Animals','Dog Breeds','Cat Breeds','Birds of Prey','Flowers','Trees','Mushrooms','Marine Mammals','Sharks','Snakes','Butterflies','Natural Wonders','Beaches','Volcanoes','Clouds','Cooking Ingredients'],
-'Music':['Bands','Solo Artists','Pop Stars','Rock Bands','Albums','Musical Instruments','Song Titles','Music Videos','DJs','Rappers','Country Music','Classical Composers','Opera','Musicals','Boy Bands','Girl Groups','Album Covers','Concerts','Music Awards','Famous Singers']
+'Entertainment':['Movies','TV Shows','Famous Movie Quotes','Entertainment','Actors','Actresses','Sitcoms','Drama Series','Reality TV','Game Shows','Movie Characters','Famous Directors','Film Franchises','Streaming Shows','Musicals','Award Winners','Action Movies','Comedy Movies','Horror Movies','Science Fiction'],
+'Geography':['Country Flags','Countries','Capital Cities','World Landmarks','European Cities','Asian Cities','African Countries','South American Countries','US States','Australian Cities','Islands','Mountains','Rivers','Lakes','Deserts','National Parks','World Maps','Famous Bridges','Airports','Skylines'],
+'Science':['Space','Science','Human Body','Maths — Easy','Maths — Medium','Times Tables','Division','Maths — Hard','Animals','Birds','Fish','Insects','Dinosaurs','Planets','Chemistry','Physics','Weather','Plants','Trees','Flowers'],
+'History':['Roman Numerals','World History','Ancient Egypt','Ancient Rome','Ancient Greece','World War I','World War II','Kings','Queens','World Leaders','Explorers','Inventors','Historic Buildings','Ancient Civilisations','Famous Battles','Presidents','Prime Ministers','Archaeology','Medieval Life','The Renaissance'],
+'Sport':['Sport','Football Clubs','Soccer Players','Basketball','Tennis','Golf','Cricket','Rugby','Baseball','Formula One','Olympic Sports','Sports Equipment','Stadiums','Combat Sports','Wrestling','Swimming','Athletics','Cycling','Winter Sports','Motorsport'],
+'Pop Culture':['Famous Logos','Brands','Video Games','Game Consoles','Superheroes','Villains','Anime','Internet Culture','Social Media','Memes','Celebrities','Fashion Brands','Toys','Board Games','Comic Characters','Awards','Catchphrases','Reality Stars','Famous Duos','Technology'],
+'Cartoons':['Cartoons','Disney Characters','Pixar Characters','Looney Tunes','Nickelodeon','Cartoon Network','Classic Cartoons','Anime Characters','Animated Movies','Cartoon Animals','Superhero Cartoons','Comic Strips','Children’s TV','Animated Villains','Princesses','Sidekicks','Robots','Fantasy Creatures','Cartoon Families','Animated Objects'],
+'Life':['General Knowledge','Opposites','Car Brands & Models','Types of Cars','Common Foods','Fruit','Vegetables','Fast Food','Furniture','Kitchen Items','Tools','Clothing','Shoes','Household Objects','Jobs','Transport','Road Signs','Currencies','Languages','Everyday Technology'],
+'Nature':['Animals','Wild Animals','Australian Animals','Farm Animals','Dog Breeds','Cat Breeds','Birds of Prey','Flowers','Trees','Mushrooms','Marine Mammals','Sharks','Snakes','Butterflies','Natural Wonders','Beaches','Volcanoes','Clouds','Weather Events','Habitats'],
+'Music':['Music','Bands','Solo Artists','Pop Stars','Rock Bands','Albums','Musical Instruments','Song Titles','Music Videos','DJs','Rappers','Country Music','Classical Composers','Opera','Musicals','Boy Bands','Girl Groups','Album Covers','Concerts','Music Awards']
 };
 let game={count:2,players:[],draftIndex:0,chosen:new Set(),tiles:[],cols:2,challenger:null,defender:null,duelCategory:null,duelNames:[],winner:null};
 let itemQueue=[],itemIndex=0,activePlayer=0,clocks=[45,45],running=false,lastFrame=0,rafId=null,recognition=null,recognitionStarting=false,recognitionWanted=false,processing=false;
