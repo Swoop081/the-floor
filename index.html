@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Floor - Safari Voice Edition</title>
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #161f33;
+      --accent: #3b82f6;
+      --active: #eab308;
+      --text: #f8fafc;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+    h1 { margin: 8px 0; color: #60a5fa; text-align: center; font-size: 1.4rem; }
+    
+    /* Grid View */
+    #board-view { width: 100%; max-width: 480px; display: flex; flex-direction: column; gap: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; width: 100%; aspect-ratio: 1; }
+    .tile {
+      background: var(--card-bg);
+      border: 2px solid #2d3748;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+      font-size: 0.75rem;
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s;
+    }
+    .tile.selected { border-color: var(--active); background: #374151; }
+    .tile.adjacent { border-color: #f59e0b; box-shadow: 0 0 8px rgba(245, 158, 11, 0.4); }
+    .tile-name { font-weight: bold; font-size: 0.75rem; }
+    .tile-cat { color: #9ca3af; font-size: 0.6rem; margin-top: 2px; }
+
+    /* Duel View */
+    #duel-view { width: 100%; max-width: 480px; display: none; flex-direction: column; gap: 12px; align-items: center; }
+    .clocks { display: flex; width: 100%; justify-content: space-between; gap: 12px; }
+    .clock-card {
+      flex: 1;
+      background: var(--card-bg);
+      border: 2px solid #374151;
+      border-radius: 12px;
+      padding: 12px;
+      text-align: center;
+    }
+    .clock-card.active { border-color: var(--active); box-shadow: 0 0 12px rgba(234, 179, 8, 0.4); }
+    .timer { font-size: 2rem; font-weight: bold; font-family: monospace; }
+
+    .arena {
+      width: 100%;
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 16px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+    }
+    .clue-box {
+      font-size: 1.3rem;
+      font-weight: bold;
+      min-height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: #38bdf8;
+    }
+    .voice-transcript {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      min-height: 24px;
+      font-style: italic;
+    }
+
+    button {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+    }
+    .btn-pass { background: #ef4444; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+  <h1>THE FLOOR (Safari Voice Edition)</h1>
+
+  <!-- BOARD SELECTION VIEW -->
+  <div id="board-view">
+    <p id="instruction" style="text-align:center; font-size: 0.85rem; color: #9ca3af; margin:0;">
+      Tap a tile to choose Challenger, then tap an adjacent neighbor to duel!
+    </p>
+    <div id="grid" class="grid"></div>
+  </div>
+
+  <!-- DUEL VIEW -->
+  <div id="duel-view">
+    <div class="clocks">
+      <div id="p1-card" class="clock-card">
+        <div id="p1-name" style="font-weight:bold;">Player 1</div>
+        <div id="p1-time" class="timer">45.0</div>
+      </div>
+      <div id="p2-card" class="clock-card">
+        <div id="p2-name" style="font-weight:bold;">Player 2</div>
+        <div id="p2-time" class="timer">45.0</div>
+      </div>
+    </div>
+
+    <div class="arena">
+      <div id="category-display" style="font-size:0.85rem; color:#a7f3d0; text-transform:uppercase; letter-spacing:1px; font-weight:bold;"></div>
+      <div id="clue-display" class="clue-box">TAP START TO ENABLE MIC</div>
+      <div id="transcript-display" class="voice-transcript">Listening...</div>
+      
+      <button id="start-btn" onclick="startDuel()">START DUEL (ENABLE MIC)</button>
+      <button id="pass-btn" class="btn-pass" onclick="handlePass()" style="display:none;">PASS (-3s)</button>
+    </div>
+  </div>
+
+  <script>
+    // Full 18-Category Dataset
+    const DATA = {
+      "Kids Movies": [
+        { q: "A lion cub named Simba", a: ["lion king", "the lion king"] },
+        { q: "Green ogre living in a swamp", a: ["shrek"] },
+        { q: "A blue hedgehog running fast", a: ["sonic", "sonic the hedgehog"] },
+        { q: "A cowboy doll named Woody", a: ["toy story"] }
+      ],
+      "Reality TV": [
+        { q: "Contestants isolated in a house with Big Brother", a: ["big brother"] },
+        { q: "Stranded on an island competing for immunity", a: ["survivor"] },
+        { q: "Home renovation competition show", a: ["the block"] },
+        { q: "Amateur chefs competing in a kitchen", a: ["masterchef", "master chef"] }
+      ],
+      "Shoes": [
+        { q: "Comfortable foam clogs with holes", a: ["crocs", "croc"] },
+        { q: "Classic Australian sheepskin boots", a: ["ugg", "ugg boots", "uggs"] },
+        { q: "Formal shoes with a long thin heel", a: ["stilettos", "stiletto", "high heels", "heels"] },
+        { q: "Footwear worn on ice with metal blades", a: ["ice skates", "skates"] }
+      ],
+      "Fruits": [
+        { q: "Yellow curved tropical fruit", a: ["banana"] },
+        { q: "Spiky top fruit with sweet yellow flesh", a: ["pineapple"] },
+        { q: "Large green fruit with red inside and black seeds", a: ["watermelon"] },
+        { q: "Small red fruit with seeds on the outside", a: ["strawberry"] }
+      ],
+      "Bands": [
+        { q: "British rock band led by Freddie Mercury", a: ["queen"] },
+        { q: "The Fab Four from Liverpool", a: ["beatles", "the beatles"] },
+        { q: "Australian hard rock band known for Highway to Hell", a: ["acdc", "ac dc"] },
+        { q: "American band known for Sweet Child O' Mine", a: ["guns and roses", "guns n roses"] }
+      ],
+      "Dogs": [
+        { q: "Wrinkly face, short snout, small breed", a: ["pug"] },
+        { q: "White coat with black spots", a: ["dalmatian"] },
+        { q: "Large German police and working dog breed", a: ["german shepherd"] },
+        { q: "Fluffy, highly intelligent haircut breed", a: ["poodle"] }
+      ],
+      "Celebrations": [
+        { q: "Dressing in costumes on October 31st", a: ["halloween"] },
+        { q: "Annual celebration of someone's birth", a: ["birthday"] },
+        { q: "Holiday with trees and present giving on Dec 25", a: ["christmas"] },
+        { q: "Festival of colorful powder in India", a: ["holi", "color festival"] }
+      ],
+      "Aussie Tucker": [
+        { q: "Sponge cake coated in chocolate and coconut", a: ["lamington", "lamingtons"] },
+        { q: "Salty dark brown yeast extract spread", a: ["vegemite"] },
+        { q: "White bread buttered with rainbow sprinkles", a: ["fairy bread"] },
+        { q: "Chicken cutlet topped with tomato sauce and cheese", a: ["parma", "parmi", "chicken parmigiana"] }
+      ],
+      "Capital Cities": [
+        { q: "Capital of France", a: ["paris"] },
+        { q: "Capital of Japan", a: ["tokyo"] },
+        { q: "Capital of United Kingdom", a: ["london"] },
+        { q: "Capital of Australia", a: ["canberra"] }
+      ],
+      "Desserts": [
+        { q: "Meringue dessert topped with cream and fresh fruit", a: ["pavlova"] },
+        { q: "Italian espresso and mascarpone dessert", a: ["tiramisu"] },
+        { q: "Rich baked dessert with a cream cheese base", a: ["cheesecake"] }
+      ],
+      "Tennis Legends": [
+        { q: "Swiss player with 20 Grand Slam titles", a: ["roger federer", "federer"] },
+        { q: "Spanish 'King of Clay' winner of 14 French Opens", a: ["rafael nadal", "nadal"] },
+        { q: "American female winner of 23 Grand Slam singles titles", a: ["serena williams", "serena"] }
+      ],
+      "Aussie Wildlife": [
+        { q: "Pouched marsupial that hops on powerful back legs", a: ["kangaroo"] },
+        { q: "Tree-dwelling marsupial that eats eucalyptus leaves", a: ["koala"] },
+        { q: "Egg-laying mammal with a duck bill", a: ["platypus"] }
+      ],
+      "Fashion Icons": [
+        { q: "French founder of the Little Black Dress brand", a: ["coco chanel", "chanel"] },
+        { q: "Italian brand famous for its Medusa logo", a: ["versace"] }
+      ],
+      "Logie Winners": [
+        { q: "Gold Logie winner and host of LEGO Masters AU", a: ["hamish blake", "hamish"] },
+        { q: "Australian icon who played Alf Stewart on Home and Away", a: ["ray meagher"] }
+      ],
+      "Car Logos": [
+        { q: "Logo featuring a three-pointed star inside a circle", a: ["mercedes", "mercedes benz"] },
+        { q: "Logo with four interlocking rings", a: ["audi"] }
+      ],
+      "Aussie Pollies": [
+        { q: "Prime Minister of Australia elected in 2022", a: ["anthony albanese", "albo"] },
+        { q: "Former PM famous for swimming pool incident in 1967", a: ["harold holt"] }
+      ],
+      "Boy Bands": [
+        { q: "Nineties band with Nick Carter and AJ McLean", a: ["backstreet boys"] },
+        { q: "British-Irish group featuring Harry Styles", a: ["one direction"] }
+      ],
+      "Drinks": [
+        { q: "Italian espresso with steamed milk and thick foam", a: ["cappuccino"] },
+        { q: "Mexican cocktail made with tequila and lime juice", a: ["margarita"] }
+      ]
+    };
+
+    const CATEGORY_NAMES = Object.keys(DATA);
+
+    // Initialize 16 players/tiles
+    let tiles = Array.from({ length: 16 }, (_, i) => ({
+      id: i,
+      owner: `Player ${i + 1}`,
+      category: CATEGORY_NAMES[i % CATEGORY_NAMES.length]
+    }));
+
+    let challengerTile = null;
+    let defenderTile = null;
+    let activePlayerIndex = 0; // 0 = Challenger, 1 = Defender
+    let times = [45.0, 45.0];
+    let clockInterval = null;
+    let currentClueIndex = 0;
+    let currentClueList = [];
+    let recognition = null;
+    let isDuelActive = false;
+
+    function renderBoard() {
+      const grid = document.getElementById("grid");
+      grid.innerHTML = "";
+      tiles.forEach((t, idx) => {
+        const div = document.createElement("div");
+        div.className = "tile";
+        if (challengerTile === idx) div.classList.add("selected");
+        if (challengerTile !== null && isAdjacent(challengerTile, idx) && challengerTile !== idx) {
+          div.classList.add("adjacent");
+        }
+        div.innerHTML = `<div class="tile-name">${t.owner}</div><div class="tile-cat">${t.category}</div>`;
+        div.onclick = () => handleTileClick(idx);
+        grid.appendChild(div);
+      });
+    }
+
+    function isAdjacent(idx1, idx2) {
+      const r1 = Math.floor(idx1 / 4), c1 = idx1 % 4;
+      const r2 = Math.floor(idx2 / 4), c2 = idx2 % 4;
+      return (Math.abs(r1 - r2) + Math.abs(c1 - c2)) === 1;
+    }
+
+    function handleTileClick(idx) {
+      if (challengerTile === null) {
+        challengerTile = idx;
+      } else if (challengerTile === idx) {
+        challengerTile = null;
+      } else if (isAdjacent(challengerTile, idx)) {
+        defenderTile = idx;
+        setupDuel();
+      }
+      renderBoard();
+    }
+
+    function setupDuel() {
+      document.getElementById("board-view").style.display = "none";
+      document.getElementById("duel-view").style.display = "flex";
+      
+      const p1 = tiles[challengerTile];
+      const p2 = tiles[defenderTile];
+
+      document.getElementById("p1-name").innerText = p1.owner;
+      document.getElementById("p2-name").innerText = p2.owner;
+      document.getElementById("category-display").innerText = `Category: ${p2.category}`;
+      
+      currentClueList = DATA[p2.category] || DATA["Kids Movies"];
+      currentClueIndex = 0;
+      times = [45.0, 45.0];
+      activePlayerIndex = 0;
+      updateClockUI();
+    }
+
+    function setupVoiceRecognition() {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        alert("Speech Recognition requires iOS Safari.");
+        return;
+      }
+      recognition = new SpeechRecognition();
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+
+      recognition.onresult = (event) => {
+        if (!isDuelActive) return;
+        let transcript = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          transcript += event.results[i][0].transcript.toLowerCase();
+        }
+        document.getElementById("transcript-display").innerText = `Heard: "${transcript}"`;
+
+        if (transcript.includes("pass")) {
+          handlePass();
+          return;
+        }
+
+        const currentAnswerKeys = currentClueList[currentClueIndex].a;
+        const isCorrect = currentAnswerKeys.some(ans => transcript.includes(ans));
+
+        if (isCorrect) {
+          nextTurn();
+        }
+      };
+
+      recognition.onend = () => {
+        if (isDuelActive) recognition.start();
+      };
+    }
+
+    function startDuel() {
+      document.getElementById("start-btn").style.display = "none";
+      document.getElementById("pass-btn").style.display = "block";
+      
+      setupVoiceRecognition();
+      if (recognition) recognition.start();
+      
+      isDuelActive = true;
+      showClue();
+      startTimer();
+    }
+
+    function showClue() {
+      const clue = currentClueList[currentClueIndex];
+      document.getElementById("clue-display").innerText = clue.q;
+      document.getElementById("transcript-display").innerText = "Listening...";
+    }
+
+    function startTimer() {
+      clearInterval(clockInterval);
+      clockInterval = setInterval(() => {
+        times[activePlayerIndex] -= 0.1;
+        if (times[activePlayerIndex] <= 0) {
+          times[activePlayerIndex] = 0;
+          endDuel();
+        }
+        updateClockUI();
+      }, 100);
+    }
+
+    function handlePass() {
+      if (!isDuelActive) return;
+      times[activePlayerIndex] = Math.max(0, times[activePlayerIndex] - 3.0);
+      updateClockUI();
+      currentClueIndex = (currentClueIndex + 1) % currentClueList.length;
+      showClue();
+    }
+
+    function nextTurn() {
+      activePlayerIndex = activePlayerIndex === 0 ? 1 : 0;
+      currentClueIndex = (currentClueIndex + 1) % currentClueList.length;
+      showClue();
+      
+      document.getElementById("p1-card").classList.toggle("active", activePlayerIndex === 0);
+      document.getElementById("p2-card").classList.toggle("active", activePlayerIndex === 1);
+    }
+
+    function updateClockUI() {
+      document.getElementById("p1-time").innerText = times[0].toFixed(1);
+      document.getElementById("p2-time").innerText = times[1].toFixed(1);
+    }
+
+    function endDuel() {
+      isDuelActive = false;
+      clearInterval(clockInterval);
+      if (recognition) recognition.stop();
+
+      const winner = activePlayerIndex === 0 ? tiles[defenderTile].owner : tiles[challengerTile].owner;
+      alert(`GAME OVER! ${winner} wins the territory!`);
+
+      document.getElementById("duel-view").style.display = "none";
+      document.getElementById("board-view").style.display = "flex";
+      document.getElementById("start-btn").style.display = "block";
+      document.getElementById("pass-btn").style.display = "none";
+      challengerTile = null;
+      defenderTile = null;
+      renderBoard();
+    }
+
+    renderBoard();
+  </script>
+</body>
+</html>
