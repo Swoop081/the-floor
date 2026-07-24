@@ -70,6 +70,7 @@ let running = false;
 let lastFrame = 0;
 let rafId = null;
 let recognition = null;
+let recognitionStarting = false;
 let recognitionWanted = false;
 let processing = false;
 let names = ['PLAYER 1','PLAYER 2'];
@@ -92,16 +93,25 @@ function renderCategories(){
 }
 
 function startSetup(){
+  stopListening(); recognition=null; recognitionStarting=false;
   names=[($('p1Name').value.trim()||'PLAYER 1').toUpperCase(),($('p2Name').value.trim()||'PLAYER 2').toUpperCase()];
   const cat=categoryById(selectedCategory);
   itemQueue=shuffle(cat.items); itemIndex=0; activePlayer=0; clocks=[45,45]; running=false; processing=false;
   $('duelCategory').textContent=cat.name; $('name0').textContent=names[0]; $('name1').textContent=names[1];
   $('beginBtn').style.display='block'; $('beginBtn').disabled=false; $('passBtn').disabled=true; $('manualCorrectBtn').disabled=true;
   $('voiceStatus').textContent='Tap BEGIN to activate voice'; $('heardText').textContent='Your answer will appear here';
-  updateClocks(); updateTurn(); renderPrompt(); showScreen('duel');
+  updateClocks(); updateTurn(); renderCardBack(); showScreen('duel');
+}
+
+function renderCardBack(){
+  const prompt=$('promptEmoji');
+  prompt.innerHTML='<div class="card-back-mark">?</div>';
+  $('promptHint').textContent='';
+  $('promptCard').classList.add('face-down');
 }
 
 function renderPrompt(){
+  $('promptCard').classList.remove('face-down');
   if(itemIndex>=itemQueue.length){ itemQueue=shuffle(categoryById(selectedCategory).items); itemIndex=0; }
   const [visual]=itemQueue[itemIndex];
   const prompt=$('promptEmoji');
@@ -115,11 +125,12 @@ function updateTurn(){
   $('turnBanner').textContent=names[activePlayer];
 }
 function updateClocks(){
-  clocks.forEach((t,i)=>{ $(`clock${i}`).textContent=Math.max(0,t).toFixed(1); $(`player${i}`).classList.toggle('danger',t<=10&&running&&i===activePlayer); });
+  clocks.forEach((t,i)=>{ $(`clock${i}`).textContent=String(Math.ceil(Math.max(0,t))); $(`player${i}`).classList.toggle('danger',t<=10&&running&&i===activePlayer); });
 }
 
 function beginDuel(){
   $('beginBtn').style.display='none'; $('passBtn').disabled=false; $('manualCorrectBtn').disabled=false;
+  renderPrompt();
   running=true; lastFrame=performance.now(); recognitionWanted=true; setupRecognition(); startListening(); tick(lastFrame);
 }
 
@@ -131,30 +142,34 @@ function tick(now){
 }
 
 function setupRecognition(){
+  if(recognition) return;
   const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
   if(!SpeechRecognition){ setVoiceError('Voice recognition is unavailable. Use CORRECT and PASS.'); return; }
-  recognition=new SpeechRecognition(); recognition.lang='en-AU'; recognition.interimResults=true; recognition.continuous=false; recognition.maxAlternatives=5;
-  recognition.onstart=()=>{ $('micDot').className='mic-dot listening'; $('voiceStatus').textContent='Listening…'; };
+  recognition=new SpeechRecognition(); recognition.lang='en-AU'; recognition.interimResults=true; recognition.continuous=false; recognition.maxAlternatives=10;
+  recognition.onstart=()=>{ recognitionStarting=false; $('micDot').className='mic-dot listening'; $('voiceStatus').textContent='Listening…'; };
   recognition.onresult=e=>{
     const alternatives=[];
     for(let i=e.resultIndex;i<e.results.length;i++) for(let j=0;j<e.results[i].length;j++) alternatives.push(e.results[i][j].transcript);
     if(alternatives.length){ $('heardText').textContent=alternatives[0]; checkSpeech(alternatives); }
   };
   recognition.onerror=e=>{
-    if(e.error==='not-allowed'||e.error==='service-not-allowed') setVoiceError('Microphone permission was blocked. Use CORRECT and PASS.');
+    recognitionStarting=false;
+    if(e.error==='not-allowed'||e.error==='service-not-allowed'){ recognitionWanted=false; setVoiceError('Microphone permission was blocked. Use CORRECT and PASS.'); }
     else if(e.error!=='aborted'&&e.error!=='no-speech') $('voiceStatus').textContent='Listening paused — restarting…';
   };
   recognition.onend=()=>{
+    recognitionStarting=false;
     $('micDot').className='mic-dot';
-    if(recognitionWanted&&running&&!processing) setTimeout(startListening,180);
+    if(recognitionWanted&&running&&!processing) setTimeout(startListening,120);
   };
 }
 
 function startListening(){
-  if(!recognition||!recognitionWanted||!running||processing)return;
-  try{ recognition.start(); }catch(e){ setTimeout(startListening,250); }
+  if(!recognition||recognitionStarting||!recognitionWanted||!running||processing)return;
+  recognitionStarting=true;
+  try{ recognition.start(); }catch(e){ recognitionStarting=false; if(recognitionWanted&&running&&!processing) setTimeout(startListening,220); }
 }
-function stopListening(){ recognitionWanted=false; if(recognition){ try{recognition.abort();}catch(e){} } $('micDot').className='mic-dot'; }
+function stopListening(){ recognitionWanted=false; recognitionStarting=false; if(recognition){ try{recognition.abort();}catch(e){} } $('micDot').className='mic-dot'; }
 function setVoiceError(msg){ $('micDot').className='mic-dot error'; $('voiceStatus').textContent=msg; }
 
 function checkSpeech(alternatives){
@@ -162,7 +177,12 @@ function checkSpeech(alternatives){
   const normalized=alternatives.map(normalize);
   if(normalized.some(t=>t==='pass'||t.endsWith(' pass'))){ doPass(); return; }
   const answers=itemQueue[itemIndex][1].map(normalize);
-  const matched=normalized.some(t=>answers.some(a=>t===a||t.includes(a)||a.includes(t)&&t.length>=4));
+  const matched=normalized.some(t=>answers.some(a=>{
+    if(t===a) return true;
+    if(t.length>=3 && (t.includes(a)||a.includes(t))) return true;
+    const heardWords=t.split(' '), answerWords=a.split(' ');
+    return answerWords.every(word=>heardWords.includes(word));
+  }));
   if(matched) correctAnswer();
 }
 
@@ -183,7 +203,7 @@ function endDuel(winner){
   running=false; processing=false; cancelAnimationFrame(rafId); stopListening();
   $('passOverlay').classList.add('hidden'); $('winnerName').textContent=names[winner];
   $('resultCopy').textContent=`${names[winner]} wins the ${categoryById(selectedCategory).name} duel and takes the tile.`;
-  [0,1].forEach(i=>{ $(`finalName${i}`).textContent=names[i]; $(`finalClock${i}`).textContent=Math.max(0,clocks[i]).toFixed(1); });
+  [0,1].forEach(i=>{ $(`finalName${i}`).textContent=names[i]; $(`finalClock${i}`).textContent=String(Math.ceil(Math.max(0,clocks[i]))); });
   showScreen('result');
 }
 
