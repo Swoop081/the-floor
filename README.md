@@ -1,25 +1,20 @@
-# Take The Tile — Voice Duel Prototype
+# Take the Tile v0.3.0 Alpha
 
-A standalone, mobile-first GitHub Pages prototype inspired by visual identification chess-clock duels.
+GitHub Pages-ready browser game. Keep `.nojekyll` in the repository root.
 
-## Deploy to GitHub Pages
-1. Create a new public GitHub repository.
-2. Upload every file and folder from this package to the repository root.
-3. Open **Settings → Pages**.
-4. Under **Build and deployment**, choose **Deploy from a branch**.
-5. Select **main** and **/(root)**, then save.
-6. Open the published HTTPS address in Safari on an iPhone.
+## Added in this build
+- Game-show start screen with version number and Start Game button.
+- Duel 1v1, 4-player, 6-player, 8-player and 10-player modes.
+- Player naming and colour selection.
+- A 200-category catalogue organised into 10 genres.
+- Category draft flow. Categories marked READY have playable local photo packs.
+- 3D-style responsive territory board.
+- Random challenger selection each round.
+- Only edge-touching enemy tiles can be challenged.
+- Duel winner takes all territory owned by the defeated player.
+- Existing iPhone speech-recognition lifecycle retained.
+- Whole-second 45-to-0 clocks and face-down first card retained.
+- First Wikimedia Commons animal and landmark photos downloaded locally and voice-mapped.
 
-## iPhone testing
-- Use Safari first.
-- Allow microphone access when prompted.
-- Keep Silent Mode off if you later add sound effects.
-- The prototype has a CORRECT fallback because iOS browser speech recognition can occasionally stop or mishear short answers.
-
-## Rules implemented
-- Two separate 45-second clocks.
-- Challenger/Player 1 answers first.
-- Correct answer stops the active clock and switches play.
-- Unlimited wrong spoken guesses; the clock keeps running.
-- PASS changes the image for the same player and subtracts three seconds.
-- First clock to reach zero loses.
+## Content status
+The 200 category names and genre structure are installed. This alpha contains 12 READY photo packs built from the existing 50-food library plus two Wikimedia Commons sampler packs. Remaining categories are visible as planned content packs and are intentionally locked until their local images and voice aliases are added and checked.
