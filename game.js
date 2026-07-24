@@ -2,8 +2,57 @@ const CATEGORIES = [
   { id:'animals', name:'Animals', icon:'🦁', items:[
     ['🐘',['elephant']],['🦒',['giraffe']],['🦘',['kangaroo','roo']],['🐼',['panda','panda bear']],['🦓',['zebra']],['🦉',['owl']],['🐊',['crocodile','alligator']],['🦏',['rhinoceros','rhino']],['🐙',['octopus']],['🦚',['peacock']],['🦥',['sloth']],['🦩',['flamingo']]
   ]},
-  { id:'food', name:'Food', icon:'🍕', items:[
-    ['🍕',['pizza']],['🌮',['taco']],['🍣',['sushi']],['🥐',['croissant']],['🥑',['avocado']],['🍩',['donut','doughnut']],['🥨',['pretzel']],['🥞',['pancakes','pancake']],['🧀',['cheese']],['🍿',['popcorn']],['🥝',['kiwi','kiwi fruit']],['🧁',['cupcake']]
+  { id:'food', name:'Food', icon:'assets/food/pizza.jpg', iconType:'image', items:[
+    ['assets/food/pizza.jpg',['pizza']],
+    ['assets/food/chicken-wings.jpg',['chicken wings','wings','fried chicken']],
+    ['assets/food/grapes.jpg',['grapes','grape']],
+    ['assets/food/cheese.jpg',['cheese']],
+    ['assets/food/sushi.jpg',['sushi','sushi roll']],
+    ['assets/food/shellfish.jpg',['shellfish','snails','escargot']],
+    ['assets/food/steak.jpg',['steak','beef steak']],
+    ['assets/food/burger.jpg',['burger','hamburger','cheeseburger']],
+    ['assets/food/croissant.jpg',['croissant']],
+    ['assets/food/mushroom.jpg',['mushroom','mushrooms']],
+    ['assets/food/sandwich.jpg',['sandwich','sub','submarine sandwich']],
+    ['assets/food/roast-chicken.jpg',['roast chicken','roasted chicken','whole chicken']],
+    ['assets/food/eggs.jpg',['eggs','egg']],
+    ['assets/food/french-fries.jpg',['french fries','fries','chips']],
+    ['assets/food/pork-chop.jpg',['pork chop','pork']],
+    ['assets/food/cheese-platter.jpg',['cheese platter','cheese board','cheese']],
+    ['assets/food/hot-dog.jpg',['hot dog','hotdog']],
+    ['assets/food/mixed-sushi.jpg',['sushi','sushi platter','sushi rolls']],
+    ['assets/food/tomato-soup.jpg',['tomato soup','soup']],
+    ['assets/food/brown-sandwich.jpg',['sandwich','brown bread sandwich']],
+    ['assets/food/mushrooms.jpg',['mushrooms','mushroom']],
+    ['assets/food/mussels.jpg',['mussels','mussel']],
+    ['assets/food/pasta-salad.jpg',['pasta salad','salad']],
+    ['assets/food/bread.jpg',['bread','bread roll','roll']],
+    ['assets/food/baguette.jpg',['baguette','french bread']],
+    ['assets/food/pasta.jpg',['pasta','macaroni','noodles']],
+    ['assets/food/black-olives.jpg',['black olives','olives','olive']],
+    ['assets/food/croissants.jpg',['croissants','croissant']],
+    ['assets/food/coffee-beans.jpg',['coffee beans','coffee']],
+    ['assets/food/avocado.jpg',['avocado']],
+    ['assets/food/orange.jpg',['orange','oranges']],
+    ['assets/food/kiwi.jpg',['kiwi','kiwi fruit']],
+    ['assets/food/pear.jpg',['pear']],
+    ['assets/food/pineapple.jpg',['pineapple']],
+    ['assets/food/banana.jpg',['banana','bananas']],
+    ['assets/food/coconut.jpg',['coconut']],
+    ['assets/food/eggplant.jpg',['eggplant','aubergine']],
+    ['assets/food/rambutan.jpg',['rambutan']],
+    ['assets/food/bell-pepper.jpg',['bell pepper','capsicum','pepper']],
+    ['assets/food/spring-onion.jpg',['spring onion','green onion','scallion','scallions']],
+    ['assets/food/dragon-fruit.jpg',['dragon fruit','pitaya']],
+    ['assets/food/potato.jpg',['potato','potatoes']],
+    ['assets/food/tomato.jpg',['tomato','tomatoes']],
+    ['assets/food/fig.jpg',['fig','figs']],
+    ['assets/food/onion.jpg',['onion','onions']],
+    ['assets/food/zucchini.jpg',['zucchini','courgette']],
+    ['assets/food/walnuts.jpg',['walnuts','walnut']],
+    ['assets/food/hazelnuts.jpg',['hazelnuts','hazelnut']],
+    ['assets/food/fruit-salad.jpg',['fruit salad','mixed fruit','fruit']],
+    ['assets/food/lime.jpg',['lime','limes']]
   ]},
   { id:'places', name:'World Landmarks', icon:'🗼', items:[
     ['🗼',['eiffel tower','the eiffel tower']],['🗽',['statue of liberty','the statue of liberty']],['🏛️',['parthenon','the parthenon']],['🏰',['castle']],['🎡',['london eye','the london eye','ferris wheel']],['🌉',['golden gate bridge','the golden gate bridge']],['🕌',['taj mahal','the taj mahal']],['🗿',['easter island','moai','easter island statue']],['⛩️',['torii gate','japanese gate']],['🏯',['japanese castle','pagoda']],['🕍',['synagogue']],['⛲',['trevi fountain','fountain']]
@@ -36,7 +85,7 @@ function renderCategories(){
   CATEGORIES.forEach(cat=>{
     const b=document.createElement('button');
     b.className='category'; b.dataset.id=cat.id;
-    b.innerHTML=`<span class="cat-icon">${cat.icon}</span><span>${cat.name}</span>`;
+    b.innerHTML=cat.iconType==='image' ? `<img class="cat-image" src="${cat.icon}" alt=""><span>${cat.name}</span>` : `<span class="cat-icon">${cat.icon}</span><span>${cat.name}</span>`;
     b.onclick=()=>{ selectedCategory=cat.id; [...grid.children].forEach(x=>x.classList.toggle('selected',x.dataset.id===cat.id)); $('startBtn').disabled=false; };
     grid.appendChild(b);
   });
@@ -55,7 +104,10 @@ function startSetup(){
 function renderPrompt(){
   if(itemIndex>=itemQueue.length){ itemQueue=shuffle(categoryById(selectedCategory).items); itemIndex=0; }
   const [visual]=itemQueue[itemIndex];
-  $('promptEmoji').textContent=visual; $('promptHint').textContent='';
+  const prompt=$('promptEmoji');
+  if(/^assets\//.test(visual)){ prompt.innerHTML=`<img class="prompt-photo" src="${visual}" alt="Food item">`; }
+  else { prompt.textContent=visual; }
+  $('promptHint').textContent='';
 }
 
 function updateTurn(){
