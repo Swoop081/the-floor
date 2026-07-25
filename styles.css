@@ -27,3 +27,39 @@ html,body,#app{width:100%;height:100%;overflow:hidden}
 .host-stage{max-width:1000px;display:grid;grid-template-columns:240px 1fr;align-items:center}
 @media (max-height:520px){.logo{font-size:clamp(42px,13vh,76px)}.tagline,.step-copy,.catalog-note{margin:4px 0}.mode-card{padding:8px}.category{padding:8px}.prompt-question,.prompt-text{font-size:clamp(24px,6vh,48px)}.voice-card{padding:10px}.floor-board{height:62dvh}}
 @media (orientation:portrait) and (max-width:900px){body::before{content:'ROTATE YOUR PHONE TO LANDSCAPE';position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;text-align:center;padding:30px;background:radial-gradient(circle at center,#17204f,#05071f 70%);color:white;font:900 clamp(25px,7vw,44px)/1.1 system-ui;letter-spacing:.08em}body::after{content:'Take the Tile is designed to fill a phone in landscape.';position:fixed;z-index:100000;left:12%;right:12%;top:58%;text-align:center;color:#9fdcff;font:700 16px/1.35 system-ui}}
+
+/* v0.6.0 studio edition: every screen is a fixed landscape canvas */
+html,body,#app{height:100%;width:100%;overflow:hidden;overscroll-behavior:none}
+body{position:fixed;inset:0}
+.screen{height:100dvh;min-height:0;max-height:100dvh;overflow:hidden;padding:max(7px,env(safe-area-inset-top)) max(10px,env(safe-area-inset-right)) max(7px,env(safe-area-inset-bottom)) max(10px,env(safe-area-inset-left))}
+.screen.active{display:flex;flex-direction:column}
+.screen.centre{justify-content:center}
+.topbar,.board-header,.duel-header{position:relative;flex:0 0 auto;min-height:38px}
+.topbar h1{font-size:clamp(18px,4vh,30px)}
+.step-copy,.catalog-note,.board-instruction{margin:3px 0;font-size:clamp(10px,2.2vh,14px)}
+.mode-grid{flex:1;min-height:0;width:min(900px,95vw);margin:5px auto;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(4,1fr)}
+.mode-card{min-height:0;padding:4px;font-size:clamp(10px,2.1vh,15px)}
+.mode-card strong{font-size:clamp(18px,5vh,34px)}
+.player-form{flex:1;min-height:0;width:min(1100px,97vw);margin:4px auto;grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(4,1fr);gap:5px}
+.player-row{display:flex;align-items:center;gap:5px;background:#ffffff10;border-radius:10px;padding:4px;min-height:0}
+.player-row input{width:100%;min-width:0;height:clamp(28px,7vh,42px);padding:4px 6px;border-radius:7px;background:#080d2c;border:1px solid #ffffff2a;color:#fff;font-weight:800;font-size:clamp(9px,2.1vh,13px)}
+.player-swatch{flex:0 0 clamp(25px,6vh,38px);width:clamp(25px,6vh,38px);height:clamp(25px,6vh,38px);border-radius:7px}
+#toCategoriesBtn{flex:0 0 auto;align-self:center;min-height:34px;padding:7px 18px}
+#categories{gap:3px}
+.draft-banner{padding:2px;font-size:clamp(11px,2.3vh,15px)}
+.genre-tabs{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;overflow:hidden;padding:2px 0;flex:0 0 auto}
+.genre-tab{min-width:0;padding:5px 3px;white-space:normal;font-size:clamp(8px,1.8vh,11px);line-height:1.05}
+.category-grid{flex:1;min-height:0;width:min(1100px,97vw);grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr);gap:5px}
+.category{min-height:0;padding:6px;font-size:clamp(9px,2vh,13px);overflow:hidden}
+.category small{margin-top:2px;font-size:clamp(7px,1.6vh,10px)}
+.category-pager{display:flex;align-items:center;justify-content:center;gap:10px;flex:0 0 auto;height:32px}
+.category-pager button{min-height:28px;padding:4px 12px;border-radius:8px;font-size:10px}.category-pager span{font-size:11px;font-weight:900;color:#9edfff}
+.catalog-note{flex:0 0 auto}
+.host-stage{height:100%;min-height:0;grid-template-columns:minmax(150px,30vw) 1fr;gap:18px}
+.host-avatar{height:min(88dvh,720px);width:auto;aspect-ratio:auto;border-radius:24px;overflow:hidden;background:#081036}
+.host-avatar img{width:100%;height:100%;object-fit:cover;object-position:42% center;display:block}
+.host-copy h1{font-size:clamp(32px,10vh,74px)}.host-copy p{font-size:clamp(13px,3.5vh,22px)}
+#board{gap:3px}.floor-board{flex:1;height:auto;min-height:0;max-height:none;width:min(1100px,97vw);margin:2px auto;gap:5px}.tile{min-height:0;padding:5px}.tile .owner{font-size:clamp(7px,1.7vh,11px)}.tile .cat{font-size:clamp(8px,2vh,14px)}.board-legend{max-height:28px;overflow:hidden}
+#duel{height:100dvh;min-height:0;overflow:hidden;grid-template-columns:minmax(120px,20vw) 1fr minmax(170px,25vw);grid-template-rows:38px 1fr 40px;padding:6px 10px;gap:6px}.clocks{margin:0}.player-panel{padding:5px}.player-panel strong{font-size:clamp(32px,11vh,74px)}.prompt-card{width:100%;height:100%;max-height:none;padding:7px}.turn-banner{margin:1px;font-size:11px}.voice-card{margin:0;padding:7px;overflow:hidden}.heard-text{font-size:clamp(9px,2vh,13px)}.controls button{min-height:34px;min-width:120px;padding:5px 12px}
+.primary,.secondary,.pass-btn{min-height:36px;border-radius:10px;padding:7px 14px}
+@media(max-height:430px){.catalog-note{display:none}.host-avatar{height:82dvh}.genre-tabs{grid-template-columns:repeat(5,1fr);grid-template-rows:repeat(2,1fr)}.category-grid{grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(3,1fr)}}

@@ -1,21 +1,17 @@
-# Take the Tile v0.5.0 — Living Game Show
+# Take the Tile v0.6.0 — Studio Edition
 
-Landscape-first browser game for GitHub Pages and iPhone.
+A landscape-first browser game for GitHub Pages and iPhone.
 
-## Included
-- 1–20 player support, including Solo Practice and Duel 1v1
-- Fictional host Max Sterling and full Randomizer presentation
-- Edge-adjacent territory challenges, winner-takes-territory rules, Stay & Play / Return to Floor
-- 288 installed category packs across image, word, question, quote, maths and Roman-numeral formats
-- Persistent category history so unseen categories are prioritised
-- Local real-photo food, flag, animal and landmark assets
-- iPhone speech-recognition safeguards plus manual CORRECT and PASS controls
-- 45-second whole-number duel clocks and three-second pass penalty
-- Landscape-first layouts with a rotate-device prompt in portrait
+## Changes in v0.6.0
+- Every game screen is constrained to one landscape phone viewport with no page scrolling.
+- Player setup supports 1–20 players in a fixed 5×4 grid.
+- Category selection uses 12-category pages and previous/next controls rather than scrolling.
+- Added original Max Sterling host artwork to the host and decision screens.
+- All 288 installed categories now contain at least 50 playable prompt slots.
+- Existing real-photo food, flag, elephant and landmark packs remain local.
+- Voice recognition, 45-second whole-number clocks, face-down first card, randomizer, adjacency rules, territory transfer and Stay & Play remain preserved.
 
-## v0.5.0 verification fixes
-- Category genre selection now remains available for every player instead of reverting to Life
-- Solo Practice now correctly uses its dedicated 60-second flow
-- Answer normalisation word boundaries repaired
-- Existing speech-recognition lifecycle preserved
-- Root `.nojekyll` retained for GitHub Pages
+## Important content note
+The authored core questions remain intact. Categories that previously contained fewer than 50 authored prompts are extended to 50 slots with alternate on-screen phrasings of verified questions. Image packs repeat their verified local photographs until larger unique image libraries are added.
+
+Deploy the contents of this folder to the root of a GitHub Pages repository. Keep `.nojekyll` in the root.
