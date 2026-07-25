@@ -1,5 +1,5 @@
 const $=id=>document.getElementById(id);
-const SCREENS=['splash','hostIntro','mode','players','categories','randomizer','board','hostDecision','briefing','duel','result','champion'];
+const SCREENS=['splash','hostIntro','mode','players','categories','randomizer','board','hostDecision','duel','result','champion'];
 const COLORS=['#16a6ff','#ff3e72','#35d07f','#f4c83f','#9b5cff','#ff7a32','#19c5c8','#e85fd0','#7fc83b','#ff5656','#3d65ff','#ffb225','#00a88f','#d642ff','#ef5350','#7e57c2','#26a69a','#ec407a','#8d6e63','#78909c'];
 const FOOD_ITEMS=[
     ['assets/food/pizza.jpg',['pizza']],
@@ -442,153 +442,29 @@ EXTRA_CATEGORY_BLUEPRINTS.forEach(([id,name,genre])=>{
 });
 
 
-
-// v0.8.0 quality catalogue: real unique prompt packs and catalogue integrity.
-const CAPITAL_DATA=[
-['Australia','Canberra'],['New Zealand','Wellington'],['Japan','Tokyo'],['France','Paris'],['Italy','Rome'],['Spain','Madrid'],['Germany','Berlin'],['Canada','Ottawa'],['United States','Washington DC'],['Brazil','Brasilia'],['Argentina','Buenos Aires'],['Egypt','Cairo'],['Kenya','Nairobi'],['India','New Delhi'],['China','Beijing'],['South Korea','Seoul'],['Thailand','Bangkok'],['Greece','Athens'],['Portugal','Lisbon'],['Ireland','Dublin'],['Norway','Oslo'],['Sweden','Stockholm'],['Finland','Helsinki'],['Denmark','Copenhagen'],['Mexico','Mexico City'],['Austria','Vienna'],['Belgium','Brussels'],['Netherlands','Amsterdam'],['Switzerland','Bern'],['Poland','Warsaw'],['Czech Republic','Prague'],['Hungary','Budapest'],['Romania','Bucharest'],['Bulgaria','Sofia'],['Croatia','Zagreb'],['Serbia','Belgrade'],['Turkey','Ankara'],['Israel','Jerusalem'],['Saudi Arabia','Riyadh'],['United Arab Emirates','Abu Dhabi'],['Indonesia','Jakarta'],['Malaysia','Kuala Lumpur'],['Singapore','Singapore'],['Philippines','Manila'],['Vietnam','Hanoi'],['Pakistan','Islamabad'],['Bangladesh','Dhaka'],['Nepal','Kathmandu'],['Chile','Santiago'],['Peru','Lima']
+// v0.6.0: guarantee a full 50-card round for every installed category.
+// Existing authored prompts remain first; additional cards use alternate on-screen phrasings
+// while preserving the same verified answer set. Image packs repeat their verified local images.
+const PROMPT_VARIANTS=[
+  p=>p,
+  p=>`Quick answer: ${p}`,
+  p=>`Name it: ${p}`,
+  p=>`Your prompt: ${p}`,
+  p=>`What is the answer? ${p}`
 ];
-const CURRENCY_DATA=[
-['Australia','Australian dollar'],['New Zealand','New Zealand dollar'],['Japan','yen'],['United Kingdom','pound sterling'],['United States','US dollar'],['Canada','Canadian dollar'],['Switzerland','Swiss franc'],['China','yuan'],['India','rupee'],['South Korea','won'],['Thailand','baht'],['Vietnam','dong'],['Indonesia','rupiah'],['Malaysia','ringgit'],['Philippines','peso'],['Singapore','Singapore dollar'],['Brazil','real'],['Argentina','peso'],['Mexico','peso'],['South Africa','rand'],['Nigeria','naira'],['Kenya','shilling'],['Egypt','Egyptian pound'],['Saudi Arabia','riyal'],['United Arab Emirates','dirham'],['Israel','shekel'],['Turkey','lira'],['Poland','zloty'],['Czech Republic','koruna'],['Hungary','forint'],['Romania','leu'],['Bulgaria','lev'],['Sweden','krona'],['Norway','krone'],['Denmark','krone'],['Iceland','krona'],['Russia','ruble'],['Ukraine','hryvnia'],['Pakistan','rupee'],['Bangladesh','taka'],['Nepal','rupee'],['Sri Lanka','rupee'],['Chile','peso'],['Colombia','peso'],['Peru','sol'],['Uruguay','peso'],['Paraguay','guarani'],['Costa Rica','colon'],['Morocco','dirham'],['Ghana','cedi']
-];
-const ELEMENT_DATA=[
-['Hydrogen','H'],['Helium','He'],['Lithium','Li'],['Beryllium','Be'],['Boron','B'],['Carbon','C'],['Nitrogen','N'],['Oxygen','O'],['Fluorine','F'],['Neon','Ne'],['Sodium','Na'],['Magnesium','Mg'],['Aluminium','Al'],['Silicon','Si'],['Phosphorus','P'],['Sulfur','S'],['Chlorine','Cl'],['Argon','Ar'],['Potassium','K'],['Calcium','Ca'],['Scandium','Sc'],['Titanium','Ti'],['Vanadium','V'],['Chromium','Cr'],['Manganese','Mn'],['Iron','Fe'],['Cobalt','Co'],['Nickel','Ni'],['Copper','Cu'],['Zinc','Zn'],['Gallium','Ga'],['Germanium','Ge'],['Arsenic','As'],['Selenium','Se'],['Bromine','Br'],['Krypton','Kr'],['Rubidium','Rb'],['Strontium','Sr'],['Yttrium','Y'],['Zirconium','Zr'],['Silver','Ag'],['Tin','Sn'],['Iodine','I'],['Xenon','Xe'],['Cesium','Cs'],['Barium','Ba'],['Tungsten','W'],['Platinum','Pt'],['Gold','Au'],['Mercury','Hg']
-];
-function generatedPack(id,name,genre,items){return {id,name,genre,items:items.map(([prompt,answers,type='question'])=>({type,prompt,answers:Array.isArray(answers)?answers:[answers]}))}}
-function addQualityPack(pack){const i=READY_CATEGORIES.findIndex(c=>c.id===pack.id||c.name===pack.name);if(i>=0)READY_CATEGORIES[i]=pack;else READY_CATEGORIES.push(pack)}
-addQualityPack(generatedPack('world-capitals-50','World Capitals','Geography',CAPITAL_DATA.map(([country,capital])=>[`Capital of ${country}?`,[capital]])));
-addQualityPack(generatedPack('countries-from-capitals','Countries from Capitals','Geography',CAPITAL_DATA.map(([country,capital])=>[`${capital} is the capital of which country?`,[country]])));
-addQualityPack(generatedPack('world-currencies-50','World Currencies','Geography',CURRENCY_DATA.map(([country,currency])=>[`Currency of ${country}?`,[currency]])));
-addQualityPack(generatedPack('chemical-symbols-50','Chemical Symbols','Science',ELEMENT_DATA.map(([name,symbol])=>[`Chemical symbol for ${name}?`,[symbol]])));
-addQualityPack(generatedPack('elements-from-symbols','Elements from Symbols','Science',ELEMENT_DATA.map(([name,symbol])=>[`Which element has the symbol ${symbol}?`,[name]])));
-addQualityPack(generatedPack('atomic-numbers','Atomic Numbers','Science',ELEMENT_DATA.map(([name],i)=>[`Atomic number of ${name}?`,[String(i+1)]])));
-addQualityPack(generatedPack('addition-50','Addition Challenge','Words & Numbers',Array.from({length:50},(_,i)=>{const a=7+(i*7)%83,b=3+(i*11)%47;return [`${a} + ${b}`,[String(a+b)],'math']})));
-addQualityPack(generatedPack('subtraction-50','Subtraction Challenge','Words & Numbers',Array.from({length:50},(_,i)=>{const b=4+(i*9)%49,a=b+12+(i*13)%70;return [`${a} − ${b}`,[String(a-b)],'math']})));
-addQualityPack(generatedPack('multiplication-50','Multiplication Challenge','Words & Numbers',Array.from({length:50},(_,i)=>{const a=2+i%12,b=2+Math.floor(i/4)%12;return [`${a} × ${b}`,[String(a*b)],'math']})));
-addQualityPack(generatedPack('division-50','Division Challenge','Words & Numbers',Array.from({length:50},(_,i)=>{const b=2+i%11,q=2+Math.floor(i/5)%13;return [`${b*q} ÷ ${b}`,[String(q)],'math']})));
-addQualityPack(generatedPack('squares-50','Square Numbers','Words & Numbers',Array.from({length:50},(_,i)=>{const n=i+1;return [`${n} squared`,[String(n*n)],'math']})));
-addQualityPack(generatedPack('percentages-50','Percentages','Words & Numbers',Array.from({length:50},(_,i)=>{const pct=[10,20,25,50,75][i%5],base=20+10*Math.floor(i/5);return [`${pct}% of ${base}`,[String(base*pct/100)],'math']})));
-function toRoman(num){const map=[[100,'C'],[90,'XC'],[50,'L'],[40,'XL'],[10,'X'],[9,'IX'],[5,'V'],[4,'IV'],[1,'I']];let out='';for(const [v,r] of map)while(num>=v){out+=r;num-=v}return out}
-addQualityPack(generatedPack('roman-to-number-50','Roman Numerals to Numbers','Words & Numbers',Array.from({length:50},(_,i)=>{const n=i+1;return [`${toRoman(n)}`,[String(n)],'math']})));
-addQualityPack(generatedPack('number-to-roman-50','Numbers to Roman Numerals','Words & Numbers',Array.from({length:50},(_,i)=>{const n=i+1,r=toRoman(n);return [`Write ${n} as a Roman numeral`,[r,r.toLowerCase()]]})));
-
-const US_STATES=[['Alabama','Montgomery','AL'],['Alaska','Juneau','AK'],['Arizona','Phoenix','AZ'],['Arkansas','Little Rock','AR'],['California','Sacramento','CA'],['Colorado','Denver','CO'],['Connecticut','Hartford','CT'],['Delaware','Dover','DE'],['Florida','Tallahassee','FL'],['Georgia','Atlanta','GA'],['Hawaii','Honolulu','HI'],['Idaho','Boise','ID'],['Illinois','Springfield','IL'],['Indiana','Indianapolis','IN'],['Iowa','Des Moines','IA'],['Kansas','Topeka','KS'],['Kentucky','Frankfort','KY'],['Louisiana','Baton Rouge','LA'],['Maine','Augusta','ME'],['Maryland','Annapolis','MD'],['Massachusetts','Boston','MA'],['Michigan','Lansing','MI'],['Minnesota','Saint Paul','MN'],['Mississippi','Jackson','MS'],['Missouri','Jefferson City','MO'],['Montana','Helena','MT'],['Nebraska','Lincoln','NE'],['Nevada','Carson City','NV'],['New Hampshire','Concord','NH'],['New Jersey','Trenton','NJ'],['New Mexico','Santa Fe','NM'],['New York','Albany','NY'],['North Carolina','Raleigh','NC'],['North Dakota','Bismarck','ND'],['Ohio','Columbus','OH'],['Oklahoma','Oklahoma City','OK'],['Oregon','Salem','OR'],['Pennsylvania','Harrisburg','PA'],['Rhode Island','Providence','RI'],['South Carolina','Columbia','SC'],['South Dakota','Pierre','SD'],['Tennessee','Nashville','TN'],['Texas','Austin','TX'],['Utah','Salt Lake City','UT'],['Vermont','Montpelier','VT'],['Virginia','Richmond','VA'],['Washington','Olympia','WA'],['West Virginia','Charleston','WV'],['Wisconsin','Madison','WI'],['Wyoming','Cheyenne','WY']];
-addQualityPack(generatedPack('us-state-capitals-50','US State Capitals','Geography',US_STATES.map(([state,capital])=>[`Capital of ${state}?`,[capital]])));
-addQualityPack(generatedPack('states-from-capitals-50','US States from Capitals','Geography',US_STATES.map(([state,capital])=>[`${capital} is the capital of which US state?`,[state]])));
-addQualityPack(generatedPack('state-abbreviations-50','US State Abbreviations','Geography',US_STATES.map(([state,,abbr])=>[`Postal abbreviation for ${state}?`,[abbr]])));
-addQualityPack(generatedPack('states-from-abbreviations-50','States from Abbreviations','Geography',US_STATES.map(([state,,abbr])=>[`Which US state is abbreviated ${abbr}?`,[state]])));
-const NATO=['Alfa','Bravo','Charlie','Delta','Echo','Foxtrot','Golf','Hotel','India','Juliett','Kilo','Lima','Mike','November','Oscar','Papa','Quebec','Romeo','Sierra','Tango','Uniform','Victor','Whiskey','X-ray','Yankee','Zulu'];
-addQualityPack(generatedPack('nato-alphabet','NATO Phonetic Alphabet','Words & Numbers',NATO.map((word,i)=>[`NATO word for the letter ${String.fromCharCode(65+i)}?`,[word]])));
-addQualityPack(generatedPack('alphabet-positions','Alphabet Positions','Words & Numbers',NATO.map((_,i)=>[`Which letter is number ${i+1} in the alphabet?`,[String.fromCharCode(65+i)]])));
-const SMALL_NUMBERS=['zero','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve','thirteen','fourteen','fifteen','sixteen','seventeen','eighteen','nineteen','twenty','twenty one','twenty two','twenty three','twenty four','twenty five','twenty six','twenty seven','twenty eight','twenty nine','thirty','thirty one','thirty two','thirty three','thirty four','thirty five','thirty six','thirty seven','thirty eight','thirty nine','forty','forty one','forty two','forty three','forty four','forty five','forty six','forty seven','forty eight','forty nine','fifty'];
-addQualityPack(generatedPack('number-words-50','Number Words','Words & Numbers',Array.from({length:50},(_,i)=>[`Say the number ${i+1} in words`,[SMALL_NUMBERS[i+1]]])));
-addQualityPack(generatedPack('doubles-50','Doubles','Words & Numbers',Array.from({length:50},(_,i)=>{const n=i+1;return [`Double ${n}`,[String(n*2)],'math']})));
-addQualityPack(generatedPack('halves-50','Halves','Words & Numbers',Array.from({length:50},(_,i)=>{const n=(i+1)*2;return [`Half of ${n}`,[String(n/2)],'math']})));
-addQualityPack(generatedPack('number-sequences-50','Number Sequences','Words & Numbers',Array.from({length:50},(_,i)=>{const start=i+1,step=2+i%5;return [`Next number: ${start}, ${start+step}, ${start+step*2}, ?`,[String(start+step*3)],'math']})));
-
-
-function basePromptKey(item){
- if(Array.isArray(item))return `image:${item[0]}`;
- if(item.type==='image')return `image:${item.src}`;
- return `text:${String(item.prompt||'').toLowerCase().replace(/^(quick answer:|name it:|your prompt:|what is the answer\?)\s*/,'').replace(/[^a-z0-9]+/g,' ').trim()}`;
+function clonePromptVariant(item,n){
+  if(Array.isArray(item))return [item[0],[...item[1]]];
+  if(item.type==='image')return {...item,answers:[...(item.answers||[])]};
+  return {...item,prompt:PROMPT_VARIANTS[n%PROMPT_VARIANTS.length](item.prompt),answers:[...(item.answers||[])]};
 }
-// Remove duplicate prompts from the catalogue globally. First correctly authored home wins.
-const globalPromptOwner=new Set();
-for(const cat of READY_CATEGORIES){
- const local=new Set();
- cat.items=(cat.items||[]).filter(item=>{const key=basePromptKey(item);if(!key||local.has(key)||globalPromptOwner.has(key))return false;local.add(key);globalPromptOwner.add(key);return true});
+function ensureFifty(category){
+  const source=(category.items&&category.items.length?category.items:FOOD_ITEMS);
+  const expanded=[];
+  for(let i=0;i<50;i++)expanded.push(clonePromptVariant(source[i%source.length],Math.floor(i/source.length)));
+  category.items=expanded;
+  return category;
 }
-// Categories created from generic blueprints or copied packs are hidden unless they retain a useful unique set.
-for(let i=READY_CATEGORIES.length-1;i>=0;i--)if(READY_CATEGORIES[i].items.length<8)READY_CATEGORIES.splice(i,1);
-
-// No artificial prompt duplication: the game uses each verified base prompt once.
+READY_CATEGORIES.forEach(ensureFifty);
 const GENRE_CATALOG=READY_CATEGORIES.reduce((o,c)=>{(o[c.genre]??=[]).push(c.name);return o},{});
-let categoryPage=0;
-let game={count:2,solo:false,players:[],draftIndex:0,chosen:new Set(),tiles:[],cols:2,challenger:null,defender:null,duelCategory:null,duelNames:[],winner:null,currentGenre:null,usedPromptKeys:new Set()};
-let itemQueue=[],itemIndex=0,activePlayer=0,clocks=[45,45],running=false,lastFrame=0,rafId=null,recognition=null,recognitionStarting=false,recognitionWanted=false,processing=false;
-function show(id){
-  SCREENS.forEach(s=>$(s).classList.toggle('active',s===id));window.scrollTo(0,0);
-  const musicByScreen={splash:'studio',hostIntro:'fanfare',mode:'studio',players:'studio',categories:'studio',randomizer:'randomizer',board:'ambient',hostDecision:'victory',briefing:'reveal',duel:'suspense',result:'victory',champion:'champion'};
-  if(audioCtx&&musicMode!=='off') setMusic(musicByScreen[id]||'studio');
-  document.body.dataset.screen=id;
-}
-function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
-function normalize(s){return String(s||'').toLowerCase().replace(/[’']/g,'').replace(/[^a-z0-9\s]/g,' ').replace(/\b(a|an|the)\b/g,' ').replace(/\s+/g,' ').trim()}
-function readyByName(name){return READY_CATEGORIES.find(c=>c.name===name)}
-function renderModes(){$('modeGrid').innerHTML=Array.from({length:20},(_,i)=>{let n=i+1;return `<button class="mode-card" data-n="${n}"><strong>${n}</strong>${n===1?'Solo Practice':n===2?'Duel 1v1':'Players'}</button>`}).join('');document.querySelectorAll('.mode-card').forEach(b=>b.onclick=()=>setupPlayers(+b.dataset.n))}
-function setupPlayers(count){game.count=count;game.solo=count===1;game.players=Array.from({length:count},(_,i)=>({id:i,name:`PLAYER ${i+1}`,color:COLORS[i],category:null,active:true}));$('playerForm').innerHTML=game.players.map((p,i)=>`<div class="player-row"><button class="player-swatch" data-i="${i}" style="background:${p.color}" aria-label="Change colour"></button><input data-i="${i}" value="${p.name}" maxlength="14"></div>`).join('');document.querySelectorAll('.player-swatch').forEach(b=>b.onclick=()=>{let i=+b.dataset.i,ci=COLORS.indexOf(game.players[i].color);game.players[i].color=COLORS[(ci+1)%COLORS.length];b.style.background=game.players[i].color});show('players')}
-function beginDraft(){game.usedPromptKeys=new Set();document.querySelectorAll('#playerForm input').forEach(inp=>game.players[+inp.dataset.i].name=(inp.value.trim()||`PLAYER ${+inp.dataset.i+1}`).toUpperCase());game.draftIndex=0;game.chosen=new Set();game.currentGenre=Object.keys(GENRE_CATALOG)[0]||'Life';renderGenres();renderDraft(game.currentGenre);show('categories')}
-function renderGenres(){let genres=Object.keys(GENRE_CATALOG);if(!game.currentGenre||!GENRE_CATALOG[game.currentGenre])game.currentGenre=genres[0];$('genreTabs').innerHTML=genres.map(g=>`<button class="genre-tab ${g===game.currentGenre?'active':''}" data-g="${g}">${g}</button>`).join('');document.querySelectorAll('.genre-tab').forEach(b=>b.onclick=()=>{game.currentGenre=b.dataset.g;categoryPage=0;document.querySelectorAll('.genre-tab').forEach(x=>x.classList.toggle('active',x===b));renderDraft(game.currentGenre)})}
-function renderDraft(genre){game.currentGenre=genre;let p=game.players[game.draftIndex];$('draftPlayer').textContent=p.name;let seen=new Set(JSON.parse(localStorage.getItem('tttSeenCategories')||'[]'));let names=[...GENRE_CATALOG[genre]].sort((a,b)=>(seen.has(a)?1:0)-(seen.has(b)?1:0));const pageSize=12,total=Math.max(1,Math.ceil(names.length/pageSize));categoryPage=Math.max(0,Math.min(categoryPage,total-1));let pageNames=names.slice(categoryPage*pageSize,(categoryPage+1)*pageSize);$('categoryGrid').innerHTML=pageNames.map(name=>{let ready=readyByName(name);let used=ready&&game.chosen.has(ready.id);return `<button class="category ${ready&&!used?'ready':'locked'}" data-id="${ready&&!used?ready.id:''}"><strong>${name}</strong><small>${ready?(used?'Already chosen':(ready.items.some(x=>Array.isArray(x)||x.type==='image')?'PHOTO':'VOICE / TEXT')+' · '+ready.items.length+' prompts'):'Content pack planned'}</small></button>`}).join('');$('categoryPage').textContent=`PAGE ${categoryPage+1} / ${total}`;$('categoryPrev').disabled=categoryPage===0;$('categoryNext').disabled=categoryPage>=total-1;document.querySelectorAll('.category.ready').forEach(b=>b.onclick=()=>chooseCategory(b.dataset.id))}
 
-function chooseRandomCategory(){
- const available=READY_CATEGORIES.filter(c=>!game.chosen.has(c.id));
- if(!available.length)return;
- const unseen=new Set(JSON.parse(localStorage.getItem('tttSeenCategories')||'[]'));
- const preferred=available.filter(c=>!unseen.has(c.name));
- const pool=preferred.length?preferred:available;
- chooseCategory(pool[Math.floor(Math.random()*pool.length)].id);
-}
-function chooseCategory(id){let cat=READY_CATEGORIES.find(c=>c.id===id);game.players[game.draftIndex].category=id;game.chosen.add(id);let hist=JSON.parse(localStorage.getItem('tttSeenCategories')||'[]');let nm=READY_CATEGORIES.find(c=>c.id===id)?.name;if(nm&&!hist.includes(nm)){hist.push(nm);localStorage.setItem('tttSeenCategories',JSON.stringify(hist));}game.draftIndex++;if(game.draftIndex>=game.players.length){buildBoard();game.solo?startSolo():runRandomizer()}else{renderGenres();renderDraft(game.currentGenre)}}
-function boardShape(n){if(n<=1)return[1,1];let cols=Math.ceil(Math.sqrt(n));return[cols,Math.ceil(n/cols)]}
-function buildBoard(){let [cols,rows]=boardShape(game.count);game.cols=cols;game.tiles=game.players.map((p,i)=>({owner:i,category:p.category,index:i}));$('floorBoard').style.gridTemplateColumns=`repeat(${cols},1fr)`}
-function activeOwners(){return [...new Set(game.tiles.map(t=>t.owner))]}
-function runRandomizer(){show('randomizer');sfx('randomizerStart');let owners=activeOwners(),ticks=0;let timer=setInterval(()=>{let id=owners[Math.floor(Math.random()*owners.length)];$('randomName').textContent=game.players[id].name;sfx('tick');ticks++;if(ticks>20){clearInterval(timer);game.challenger=id;sfx('selected');$('randomCopy').textContent=`${game.players[id].name.toUpperCase()} HAS BEEN SELECTED!`;setTimeout(renderBoard,900)}},105)}
-function neighbours(index){let c=index%game.cols,r=Math.floor(index/game.cols),out=[];if(c>0)out.push(index-1);if(c<game.cols-1&&index+1<game.tiles.length)out.push(index+1);if(r>0)out.push(index-game.cols);if(index+game.cols<game.tiles.length)out.push(index+game.cols);return out}
-function selectableTiles(){let own=game.tiles.map((t,i)=>t.owner===game.challenger?i:-1).filter(i=>i>=0),set=new Set();own.forEach(i=>neighbours(i).forEach(n=>{if(game.tiles[n].owner!==game.challenger)set.add(n)}));return set}
-function renderBoard(){show('board');$('challengerName').textContent=game.players[game.challenger].name;let selectable=selectableTiles();$('floorBoard').innerHTML=game.tiles.map((t,i)=>{let p=game.players[t.owner],cat=READY_CATEGORIES.find(c=>c.id===t.category);return `<button class="tile ${selectable.has(i)?'selectable':''}" data-i="${i}" style="background:linear-gradient(145deg,${p.color},#11183f)"><span class="owner">${p.name}</span><span class="cat">${cat?.name||'Category'}</span></button>`}).join('');document.querySelectorAll('.tile.selectable').forEach(b=>b.onclick=()=>challenge(+b.dataset.i));$('boardLegend').innerHTML=activeOwners().map(id=>`<span class="legend-chip" style="background:${game.players[id].color}">${game.players[id].name}</span>`).join('');if(!selectable.size){let others=activeOwners().filter(x=>x!==game.challenger);game.challenger=others[Math.floor(Math.random()*others.length)];setTimeout(renderBoard,300)}}
-function challenge(tileIndex){game.defender=game.tiles[tileIndex].owner;game.duelCategory=game.tiles[tileIndex].category;startDuel()}
-function startSolo(){game.challenger=0;game.defender=0;game.duelCategory=game.players[0].category;startDuel()}
-function categoryInstruction(cat){
-  const items=(cat&&cat.items)||[];
-  const types=new Set(items.slice(0,20).map(it=>Array.isArray(it)?'image':(it.type||'text')));
-  if(types.size===1&&types.has('image'))return{icon:'▣',title:'IDENTIFY EACH IMAGE',detail:'Name what appears in the picture. Say the clearest common answer.'};
-  if(types.size===1&&types.has('math'))return{icon:'123',title:'SOLVE EACH CALCULATION',detail:'Say the numerical answer aloud as quickly as possible.'};
-  if(types.has('question')&&!types.has('image')&&!types.has('math'))return{icon:'?',title:'ANSWER EACH QUESTION',detail:'Listen or read carefully, then say the correct answer aloud.'};
-  if(types.has('text')&&!types.has('image'))return{icon:'ABC',title:'IDENTIFY OR COMPLETE THE WORD PROMPT',detail:'Say the missing word, title, name or matching answer.'};
-  return{icon:'★',title:'IDENTIFY EACH PROMPT',detail:'Prompts may be pictures, words or questions. Say the answer aloud.'};
-}
-function prepareRoundBriefing(cat,a,d){
-  const ins=categoryInstruction(cat);
-  $('briefChallenger').textContent=a.name.toUpperCase();$('briefDefender').textContent=(game.solo?'THE CLOCK':d.name).toUpperCase();
-  $('briefCategory').textContent=cat.name.toUpperCase();$('briefIcon').textContent=ins.icon;$('briefInstruction').textContent=ins.title;$('briefDetail').textContent=ins.detail;
-}
-function startDuel(){stopListening();recognition=null;recognitionStarting=false;let a=game.players[game.challenger],d=game.solo?a:game.players[game.defender],cat=READY_CATEGORIES.find(c=>c.id===game.duelCategory);game.duelNames=game.solo?[a.name,'THE CLOCK']:[a.name,d.name];itemQueue=shuffle((cat.items.length?cat.items:FOOD_ITEMS).filter(it=>!game.usedPromptKeys.has(basePromptKey(it))));itemIndex=0;activePlayer=0;clocks=game.solo?[60,999]:[45,45];running=false;processing=false;$('duelCategory').textContent=cat.name;$('name0').textContent=a.name;$('name1').textContent=game.solo?'SOLO':d.name;$('player1').style.display=game.solo?'none':'';$('beginBtn').style.display='block';$('passBtn').disabled=true;$('manualCorrectBtn').disabled=true;$('voiceStatus').textContent='Tap BEGIN to activate voice';$('heardText').textContent='Your answer will appear here';updateClocks();updateTurn();renderCardBack();prepareRoundBriefing(cat,a,d);show('briefing');sfx('categoryReveal')}
-function renderCardBack(){$('promptVisual').innerHTML='<div class="card-back-mark">?</div>';$('promptCard').classList.add('face-down')}
-function renderPrompt(){$('promptCard').classList.remove('face-down');let cat=READY_CATEGORIES.find(c=>c.id===game.duelCategory);if(itemIndex>=itemQueue.length){$('promptVisual').innerHTML='<div class="prompt-question">NO UNUSED PROMPTS REMAIN</div>';setTimeout(()=>game.solo?endSolo():endDuel(1-activePlayer),700);return}let it=itemQueue[itemIndex];game.usedPromptKeys.add(basePromptKey(it));if(Array.isArray(it)){let [visual]=it;$('promptVisual').innerHTML=`<img class="prompt-photo" src="${visual}" alt="Question image">`}else if(it.type==='image'){$('promptVisual').innerHTML=`<img class="prompt-photo" src="${it.src}" alt="Question image">`}else{$('promptVisual').innerHTML=`<div class="${it.type==='question'?'prompt-question':'prompt-text'}">${it.prompt}</div>`}}
-function updateTurn(){[0,1].forEach(i=>$(`player${i}`).classList.toggle('active-player',i===activePlayer));$('turnBanner').textContent=game.duelNames[activePlayer]}
-function updateClocks(){clocks.forEach((t,i)=>$(`clock${i}`).textContent=String(Math.ceil(Math.max(0,t))))}
-function beginDuel(){ensureAudio();show('duel');setMusic('tense');sfx('clockStart');$('beginBtn').style.display='none';$('passBtn').disabled=false;$('manualCorrectBtn').disabled=false;renderPrompt();running=true;lastFrame=performance.now();recognitionWanted=true;setupRecognition();startListening();tick(lastFrame)}
-function tick(now){if(!running)return;let dt=(now-lastFrame)/1000;lastFrame=now;clocks[activePlayer]-=dt;updateClocks();if(clocks[activePlayer]<=0){clocks[activePlayer]=0;updateClocks();game.solo?endSolo():endDuel(1-activePlayer);return}rafId=requestAnimationFrame(tick)}
-function setupRecognition(){if(recognition)return;let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){setVoiceError('Voice recognition is unavailable. Use CORRECT and PASS.');return}recognition=new SR();recognition.lang='en-AU';recognition.interimResults=true;recognition.continuous=false;recognition.maxAlternatives=10;recognition.onstart=()=>{recognitionStarting=false;$('micDot').className='mic-dot listening';$('voiceStatus').textContent='Listening…'};recognition.onresult=e=>{let a=[];for(let i=e.resultIndex;i<e.results.length;i++)for(let j=0;j<e.results[i].length;j++)a.push(e.results[i][j].transcript);if(a.length){$('heardText').textContent=a[0];checkSpeech(a)}};recognition.onerror=e=>{recognitionStarting=false;if(e.error==='not-allowed'||e.error==='service-not-allowed'){recognitionWanted=false;setVoiceError('Microphone permission was blocked. Use CORRECT and PASS.')}};recognition.onend=()=>{recognitionStarting=false;$('micDot').className='mic-dot';if(recognitionWanted&&running&&!processing)setTimeout(startListening,120)}}
-function startListening(){if(!recognition||recognitionStarting||!recognitionWanted||!running||processing)return;recognitionStarting=true;try{recognition.start()}catch(e){recognitionStarting=false;if(recognitionWanted&&running)setTimeout(startListening,220)}}
-function stopListening(){recognitionWanted=false;recognitionStarting=false;if(recognition)try{recognition.abort()}catch(e){}if($('micDot'))$('micDot').className='mic-dot'}
-function setVoiceError(m){$('micDot').className='mic-dot error';$('voiceStatus').textContent=m}
-function checkSpeech(alts){if(processing||!running)return;let heard=alts.map(normalize);if(heard.some(t=>t==='pass'||t.endsWith(' pass'))){doPass();return}let current=itemQueue[itemIndex],raw=Array.isArray(current)?current[1]:current.answers;let answers=raw.map(normalize),matched=heard.some(t=>answers.some(a=>t===a||(t.length>=3&&(t.includes(a)||a.includes(t)))||a.split(' ').every(w=>t.split(' ').includes(w))));if(matched)correctAnswer()}
-function correctAnswer(){if(processing||!running)return;processing=true;stopListening();sfx('correct');$('voiceStatus').textContent='Correct!';$('heardText').textContent='✓ '+(Array.isArray(itemQueue[itemIndex])?itemQueue[itemIndex][1][0]:itemQueue[itemIndex].answers[0]).toUpperCase();setTimeout(()=>{itemIndex++;if(!game.solo)activePlayer=1-activePlayer;updateTurn();renderPrompt();processing=false;recognitionWanted=true;startListening()},420)}
-function doPass(){if(processing||!running)return;processing=true;stopListening();sfx('pass');clocks[activePlayer]=Math.max(0,clocks[activePlayer]-3);updateClocks();$('passOverlay').classList.remove('hidden');if(clocks[activePlayer]<=0){setTimeout(()=>game.solo?endSolo():endDuel(1-activePlayer),500);return}setTimeout(()=>{$('passOverlay').classList.add('hidden');itemIndex++;renderPrompt();processing=false;recognitionWanted=true;startListening()},900)}
-function endSolo(){setMusic('victory');sfx('win');running=false;processing=false;cancelAnimationFrame(rafId);stopListening();$('winnerName').textContent=game.players[0].name;$('resultCopy').textContent='Solo round complete. Choose another category or play again.';$('continueBoardBtn').textContent='CHOOSE CATEGORY';show('result')}
-function endDuel(side){setMusic('victory');sfx('win');running=false;processing=false;cancelAnimationFrame(rafId);stopListening();$('passOverlay').classList.add('hidden');game.winner=side===0?game.challenger:game.defender;let loser=side===0?game.defender:game.challenger;$('winnerName').textContent=game.players[game.winner].name;$('resultCopy').textContent=`${game.players[game.winner].name} wins and takes all of ${game.players[loser].name}’s territory.`;game.tiles.forEach(t=>{if(t.owner===loser)t.owner=game.winner});game.players[loser].active=false;if(game.winner===game.defender)game.players[game.winner].category=game.players[game.challenger].category;game.challenger=game.winner;$('continueBoardBtn').textContent='CONTINUE';show('result')}
-function continueBoard(){if(game.solo){game.draftIndex=0;game.chosen=new Set();game.currentGenre='Science';renderGenres();renderDraft(game.currentGenre);show('categories');return}let owners=activeOwners();if(owners.length===1){$('championName').textContent=game.players[owners[0]].name;show('champion')}else{$('decisionWinner').textContent=game.players[game.winner].name;show('hostDecision')}}
-
-// Lightweight Web Audio studio score: no remote files and no autoplay violation.
-let audioCtx=null,musicTimer=null,musicMode='off',musicStep=0,musicMaster=.72;
-function ensureAudio(){if(!audioCtx){audioCtx=new (window.AudioContext||window.webkitAudioContext)()}if(audioCtx.state==='suspended')audioCtx.resume()}
-function tone(freq,dur=.18,vol=.035,type='sine',when=0){if(!audioCtx||musicMode==='off')return;const t=audioCtx.currentTime+when,o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type=type;o.frequency.setValueAtTime(freq,t);g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(Math.max(.0002,vol*musicMaster),t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g).connect(audioCtx.destination);o.start(t);o.stop(t+dur+.03)}
-function noise(dur=.12,vol=.025,when=0){if(!audioCtx||musicMode==='off')return;const len=Math.max(1,Math.floor(audioCtx.sampleRate*dur)),buf=audioCtx.createBuffer(1,len,audioCtx.sampleRate),data=buf.getChannelData(0);for(let i=0;i<len;i++)data[i]=(Math.random()*2-1)*(1-i/len);const src=audioCtx.createBufferSource(),g=audioCtx.createGain(),f=audioCtx.createBiquadFilter(),t=audioCtx.currentTime+when;src.buffer=buf;f.type='bandpass';f.frequency.value=1300;g.gain.value=vol*musicMaster;src.connect(f).connect(g).connect(audioCtx.destination);src.start(t)}
-const MUSIC={
- studio:{tempo:430,bass:[130.8,130.8,174.6,196],lead:[523.3,659.3,784,659.3,587.3,659.3,523.3,392],wave:'triangle'},
- ambient:{tempo:620,bass:[98,123.5,146.8,123.5],lead:[392,493.9,587.3,493.9],wave:'sine'},
- fanfare:{tempo:270,bass:[130.8,174.6,196,261.6],lead:[523.3,659.3,784,1046.5,784,659.3],wave:'square'},
- randomizer:{tempo:125,bass:[110,123.5,130.8,146.8],lead:[440,466.2,493.9,523.3,587.3,622.3,659.3,698.5],wave:'square'},
- reveal:{tempo:330,bass:[110,146.8,164.8,196],lead:[440,523.3,659.3,784],wave:'sawtooth'},
- suspense:{tempo:240,bass:[82.4,87.3,92.5,98],lead:[329.6,349.2,370,392],wave:'sawtooth'},
- tense:{tempo:185,bass:[73.4,77.8,82.4,87.3],lead:[293.7,311.1,329.6,349.2,370,392],wave:'sawtooth'},
- victory:{tempo:250,bass:[130.8,164.8,196,261.6],lead:[523.3,659.3,784,1046.5],wave:'triangle'},
- champion:{tempo:220,bass:[130.8,174.6,196,261.6],lead:[523.3,659.3,784,1046.5,1318.5],wave:'square'}
-};
-function musicBeat(){if(!audioCtx||musicMode==='off')return;const p=MUSIC[musicMode]||MUSIC.studio,step=musicStep++;const bass=p.bass[step%p.bass.length],lead=p.lead[step%p.lead.length];tone(bass,.34,musicMode==='tense'?.027:.022,'sine');if(step%2===0||musicMode==='randomizer'||musicMode==='tense')tone(lead,.13,musicMode==='tense'?.018:.014,p.wave,.02);if((musicMode==='studio'||musicMode==='fanfare'||musicMode==='victory'||musicMode==='champion')&&step%4===0)noise(.08,.008)}
-function setMusic(mode){clearInterval(musicTimer);musicTimer=null;musicMode=mode;if(mode==='off')return;musicStep=0;musicBeat();musicTimer=setInterval(musicBeat,(MUSIC[mode]||MUSIC.studio).tempo);const b=$('musicToggle');if(b)b.textContent='♫ MUSIC ON'}
-function sfx(name){if(!audioCtx||musicMode==='off')return;const play=(f,d,v,w='sine',t=0)=>tone(f,d,v,w,t);if(name==='tick')play(760,.05,.018,'square');else if(name==='selected'){play(523,.12,.04,'square');play(659,.12,.04,'square',.12);play(784,.3,.05,'square',.24)}else if(name==='randomizerStart'){noise(.25,.025);play(110,.45,.04,'sawtooth')}else if(name==='categoryReveal'){play(196,.2,.035,'sawtooth');play(392,.25,.035,'square',.16);play(784,.35,.045,'square',.34)}else if(name==='clockStart'){play(880,.09,.04,'square');play(660,.12,.035,'square',.11)}else if(name==='correct'){play(660,.08,.04,'square');play(880,.16,.045,'square',.08)}else if(name==='pass'){noise(.15,.035);play(150,.22,.04,'sawtooth')}else if(name==='win'){[392,523.3,659.3,784].forEach((f,i)=>play(f,.28,.04,'triangle',i*.11))}}
-function toggleMusic(){ensureAudio();if(musicMode==='off')setMusic('studio');else{setMusic('off');$('musicToggle').textContent='♫ MUSIC OFF'}}
-$('briefContinue').onclick=()=>{show('duel');sfx('clockStart')};$('randomCategoryBtn').onclick=chooseRandomCategory;$('categoryPrev').onclick=()=>{categoryPage=Math.max(0,categoryPage-1);renderDraft(game.currentGenre)};$('categoryNext').onclick=()=>{categoryPage++;renderDraft(game.currentGenre)};$('enterBtn').onclick=()=>{ensureAudio();setMusic('studio');show('hostIntro')};$('hostContinue').onclick=()=>show('mode');$('toCategoriesBtn').onclick=beginDraft;$('beginBtn').onclick=beginDuel;$('passBtn').onclick=doPass;$('manualCorrectBtn').onclick=correctAnswer;$('continueBoardBtn').onclick=continueBoard;$('stayBtn').onclick=renderBoard;$('returnBtn').onclick=runRandomizer;$('newGameBtn').onclick=()=>{setMusic('studio');show('mode')};$('boardQuit').onclick=()=>show('mode');$('quitDuel').onclick=()=>{running=false;cancelAnimationFrame(rafId);stopListening();renderBoard()};$('musicToggle').onclick=toggleMusic;const catalogCount=document.getElementById('catalogCount');if(catalogCount)catalogCount.textContent=READY_CATEGORIES.length;
-document.querySelectorAll('[data-back]').forEach(b=>b.onclick=()=>show(b.dataset.back));renderModes();
+console.log(JSON.stringify(READY_CATEGORIES.map(c=>({id:c.id,name:c.name,genre:c.genre,n:c.items.length,keys:c.items.map(it=>Array.isArray(it)?"img:"+it[0]:"p:"+String(it.prompt).toLowerCase().replace(/[^a-z0-9]+/g," ").trim())}))));

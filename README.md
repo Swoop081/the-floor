@@ -1,16 +1,13 @@
-# Take the Tile v0.7.0 — Prime-Time Edition
+# Take the Tile v0.8.1 — Prime-Time Audio Edition
 
-A landscape-first, phone-sized game-show experience for GitHub Pages.
+Built from v0.8.0.
 
-## v0.7.0 changes
-- Full studio-lighting and raised-tile visual polish.
-- New Take the Tile app icon set for iPhone Home Screen, PWA and favicon use.
-- Manifest changed to landscape standalone mode.
-- Expanded catalogue beyond the v0.6.0 library with 100+ additional category concepts.
-- Existing 1–20 player, randomizer, adjacency, voice, whole-second clock and category-history systems preserved.
-- Responsive compact rules for short landscape displays.
+## New in this build
+- Dedicated instruction/reveal screen before every duel.
+- Automatically explains image, maths, question, text, or mixed prompt rules.
+- Expanded procedural studio soundtrack with separate menu, board, randomizer, category reveal, suspense, duel, victory, and champion cues.
+- New randomizer ticks, selection sting, category reveal, clock-start, correct, pass, and win sound effects.
+- Stronger moving studio-light effects and broadcast-style transitions.
+- Existing 45-second clocks, three-second pass cost, voice recognition and face-down opening card are preserved.
 
-## Install
-Upload all files and folders to the root of the GitHub Pages repository. Keep `.nojekyll` in the root.
-
-On iPhone: open the site in Safari, choose Share, then **Add to Home Screen**. The Take the Tile logo should appear as the app icon.
+Music is generated locally with the Web Audio API, so no external audio files or streaming connections are required. Audio begins only after a user interaction, as required by iPhone browsers.
