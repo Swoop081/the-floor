@@ -1,9 +1,15 @@
 {
-  "name":"Take The Tile — Voice Duel",
-  "short_name":"Take The Tile",
+  "name":"Take the Tile — Prime-Time Game Show",
+  "short_name":"Take the Tile",
   "start_url":"./",
+  "scope":"./",
   "display":"standalone",
-  "background_color":"#080b2c",
-  "theme_color":"#080b2c",
-  "orientation":"portrait"
+  "background_color":"#05031b",
+  "theme_color":"#09062b",
+  "orientation":"landscape",
+  "icons":[
+    {"src":"assets/icons/icon-192.png","sizes":"192x192","type":"image/png"},
+    {"src":"assets/icons/icon-512.png","sizes":"512x512","type":"image/png"},
+    {"src":"assets/icons/icon-1024.png","sizes":"1024x1024","type":"image/png"}
+  ]
 }
