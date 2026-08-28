@@ -29,6 +29,8 @@ public class SpeechBridge {
     private boolean wanted;
     private boolean startScheduled;
     private boolean destroyed;
+    private boolean hostActive = true;
+    private int startGeneration;
     private long lastStartAt;
 
     SpeechBridge(MainActivity activity, WebView webView) {
@@ -52,6 +54,7 @@ public class SpeechBridge {
     @JavascriptInterface
     public void prepare() {
         handler.post(() -> {
+            if (!hostActive) return;
             wanted = true;
             requestOrStart();
         });
@@ -60,6 +63,7 @@ public class SpeechBridge {
     @JavascriptInterface
     public void startListening() {
         handler.post(() -> {
+            if (!hostActive) return;
             wanted = true;
             requestOrStart();
         });
@@ -71,7 +75,7 @@ public class SpeechBridge {
     }
 
     private void requestOrStart() {
-        if (destroyed || !wanted) return;
+        if (destroyed || !hostActive || !wanted) return;
 
         if (activity.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             pendingPermissionStart = true;
@@ -91,9 +95,10 @@ public class SpeechBridge {
         long delay = Math.max(0L, MIN_RESTART_GAP_MS - elapsed);
         if (delay > 0L) {
             startScheduled = true;
+            final int generation = startGeneration;
             handler.postDelayed(() -> {
                 startScheduled = false;
-                requestOrStart();
+                if (generation == startGeneration && hostActive) requestOrStart();
             }, delay);
             return;
         }
@@ -109,6 +114,8 @@ public class SpeechBridge {
     }
 
     private void stopInternal() {
+        startGeneration++;
+        startScheduled = false;
         wanted = false;
         pendingPermissionStart = false;
         if (recognizer != null) {
@@ -117,21 +124,33 @@ public class SpeechBridge {
         listening = false;
     }
 
+    void hostPaused() {
+        handler.post(() -> {
+            hostActive = false;
+            stopInternal();
+        });
+    }
+
+    void hostResumed() {
+        handler.post(() -> hostActive = true);
+    }
+
     void onPermissionResult(int requestCode, int[] grantResults) {
         if (requestCode != MIC_PERMISSION) return;
         boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
         eval("window.floorNativeSpeech&&window.floorNativeSpeech.onPermission(" + granted + ")");
-        if (granted && (pendingPermissionStart || wanted)) {
+        if (granted && hostActive && (pendingPermissionStart || wanted)) {
             pendingPermissionStart = false;
             wanted = true;
             handler.postDelayed(this::requestOrStart, 200L);
-        } else if (!granted) {
+        } else if (!granted || !hostActive) {
+            pendingPermissionStart = false;
             wanted = false;
         }
     }
 
     private void send(Bundle bundle, boolean partial) {
-        if (bundle == null) return;
+        if (!hostActive || destroyed || bundle == null) return;
         ArrayList<String> results = bundle.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
         if (results == null || results.isEmpty()) return;
         StringBuilder json = new StringBuilder("[");
@@ -144,6 +163,7 @@ public class SpeechBridge {
     }
 
     private void error(int code, String message) {
+        if (!hostActive || destroyed) return;
         eval("window.floorNativeSpeech&&window.floorNativeSpeech.onError(" + code + "," + quote(message) + ")");
     }
 
@@ -161,16 +181,21 @@ public class SpeechBridge {
 
     void destroy() {
         destroyed = true;
+        hostActive = false;
+        startGeneration++;
         wanted = false;
+        pendingPermissionStart = false;
+        startScheduled = false;
         if (recognizer != null) {
             try { recognizer.cancel(); } catch (Exception ignored) { }
             recognizer.destroy();
         }
         recognizer = null;
+        listening = false;
     }
 
     private class Listener implements RecognitionListener {
-        @Override public void onReadyForSpeech(Bundle params) { listening = true; }
+        @Override public void onReadyForSpeech(Bundle params) { if (hostActive) listening = true; }
         @Override public void onBeginningOfSpeech() { }
         @Override public void onRmsChanged(float rmsdB) { }
         @Override public void onBufferReceived(byte[] buffer) { }
@@ -183,6 +208,7 @@ public class SpeechBridge {
         }
         @Override public void onError(int code) {
             listening = false;
+            if (!hostActive || destroyed) return;
             if (code == SpeechRecognizer.ERROR_CLIENT && !wanted) return;
             String message;
             switch (code) {
