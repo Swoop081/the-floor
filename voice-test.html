@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+  <title>The Floor TV — Remote Mic Test</title>
+  <style>
+    :root{--bg:#07111f;--panel:#0e223a;--cyan:#35d6ff;--gold:#ffd34d;--red:#ff4e68;--green:#50ee9c;--muted:#92a8bd;--white:#f7fbff}
+    *{box-sizing:border-box}html,body{margin:0;min-height:100%;background:radial-gradient(circle at 50% 15%,#173a63 0,#07111f 48%,#02070e 100%);color:var(--white);font-family:Arial,Helvetica,sans-serif;overflow:hidden}
+    body:before{content:"";position:fixed;inset:0;background:linear-gradient(120deg,transparent 0 44%,rgba(53,214,255,.06) 45% 46%,transparent 47% 100%),linear-gradient(60deg,transparent 0 52%,rgba(255,211,77,.05) 53% 54%,transparent 55% 100%);pointer-events:none}
+    #app{width:100vw;height:100vh;display:flex;flex-direction:column;padding:2.2vh 2vw;gap:1.6vh}
+    header{height:8vh;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.14)}
+    .brand{font-weight:900;letter-spacing:.18em;font-size:2.8vw}.brand span{color:var(--cyan)}
+    .category{font-size:1.7vw;font-weight:800;color:var(--gold);text-transform:uppercase;letter-spacing:.08em}
+    .arena{flex:1;min-height:0;display:grid;grid-template-columns:1fr 2.2fr 1fr;gap:1.4vw;align-items:stretch}
+    .player{position:relative;background:linear-gradient(180deg,rgba(17,46,77,.95),rgba(6,18,32,.95));border:2px solid rgba(255,255,255,.16);border-radius:1.6vw;padding:2vh 1.2vw;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;transition:.18s ease}
+    .player.active{border-color:var(--cyan);box-shadow:0 0 0 .25vw rgba(53,214,255,.18),inset 0 0 5vw rgba(53,214,255,.12);transform:scale(1.015)}
+    .player.active:before{content:"YOUR TURN";position:absolute;top:1.4vh;padding:.5vh .9vw;border-radius:999px;background:var(--cyan);color:#02111c;font-size:1.05vw;font-weight:900;letter-spacing:.12em}
+    .name{font-size:2.5vw;font-weight:900;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2vh}.clock{font-variant-numeric:tabular-nums;font-size:8.6vw;line-height:.9;font-weight:900;letter-spacing:-.06em}.clock.danger{color:var(--red);animation:pulse .55s infinite alternate}
+    .center{min-width:0;display:flex;flex-direction:column;gap:1.2vh}
+    .stage{flex:1;min-height:0;background:#02070d;border:2px solid rgba(255,255,255,.2);border-radius:1.6vw;overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center}
+    .stage img{width:100%;height:100%;object-fit:contain;background:#fff}
+    .stage .cover{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:3vw;background:radial-gradient(circle,#173d65,#061321 70%);font-size:3.5vw;font-weight:900;letter-spacing:.06em}
+    .stage .flash{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:5vw;font-weight:1000;letter-spacing:.08em;opacity:0;pointer-events:none}.flash.show{animation:flash .42s ease}.flash.correct{background:rgba(20,215,120,.88)}.flash.pass{background:rgba(255,173,35,.88)}
+    .voicebar{height:9vh;background:rgba(5,20,35,.94);border:1px solid rgba(255,255,255,.16);border-radius:1vw;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:1.2vw;padding:1vh 1.2vw}
+    .mic{width:3.2vw;height:3.2vw;border-radius:50%;background:#3a4a59;box-shadow:0 0 0 .35vw rgba(255,255,255,.05)}.mic.live{background:var(--green);box-shadow:0 0 1.5vw rgba(80,238,156,.8);animation:pulse .55s infinite alternate}.mic.error{background:var(--red)}
+    .listen{font-size:1.3vw;font-weight:800}.heard{font-size:1.1vw;color:var(--muted);margin-top:.3vh;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.native{font-size:.95vw;color:var(--muted);text-align:right}
+    footer{height:7vh;display:flex;align-items:center;justify-content:center;gap:1.2vw;color:#c7d7e4;font-size:1.15vw}.pill{padding:.65vh .75vw;border:1px solid rgba(255,255,255,.18);border-radius:.6vw;background:rgba(255,255,255,.05)}
+    button{font:inherit;border:0;border-radius:.9vw;padding:1.2vh 2vw;background:var(--gold);color:#17202b;font-weight:900;font-size:1.5vw;cursor:pointer;outline:none}button:focus{box-shadow:0 0 0 .3vw var(--cyan)}
+    #overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,6,13,.94);z-index:20}.card{width:56vw;padding:4vh 4vw;text-align:center;background:linear-gradient(180deg,#163653,#091a2b);border:2px solid rgba(255,255,255,.2);border-radius:2vw}.card h1{font-size:4vw;margin:0 0 1vh}.card h2{font-size:2.3vw;color:var(--cyan);margin:.5vh 0 2vh}.card p{font-size:1.35vw;line-height:1.5;color:#d6e3ee}.card .rules{display:flex;justify-content:center;gap:1vw;margin:2vh 0 3vh}.card .rules span{background:rgba(255,255,255,.07);padding:1vh 1vw;border-radius:.7vw;font-weight:800}.winner{font-size:4vw;color:var(--gold);font-weight:1000;margin:1vh 0}
+    @keyframes pulse{from{transform:scale(.96)}to{transform:scale(1.04)}}@keyframes flash{0%{opacity:0}20%{opacity:1}75%{opacity:1}100%{opacity:0}}
+  </style>
+</head>
+<body>
+<div id="app">
+  <header><div class="brand">THE <span>FLOOR</span></div><div class="category">Remote Mic Test · Category: Food</div></header>
+  <div class="arena">
+    <section id="p0" class="player"><div class="name">Jestine</div><div id="c0" class="clock">45</div></section>
+    <main class="center">
+      <div class="stage"><div id="cover" class="cover">PRESS OK TO START<br>JESTINE GOES FIRST</div><img id="clue" alt="Food clue" hidden><div id="correctFlash" class="flash correct">CORRECT</div><div id="passFlash" class="flash pass">PASS −3</div></div>
+      <div class="voicebar"><div id="mic" class="mic"></div><div><div id="voice" class="listen">Microphone idle</div><div id="heard" class="heard">Say the food shown. Say “Pass” to skip.</div></div><div id="native" class="native">Checking speech engine…</div></div>
+    </main>
+    <section id="p1" class="player"><div class="name">Justin</div><div id="c1" class="clock">45</div></section>
+  </div>
+  <footer><span class="pill">VOICE = ANSWER</span><span class="pill">SAY “PASS” = −3 SEC</span><span class="pill">CORRECT = CLOCK HANDOFF</span></footer>
+</div>
+<div id="overlay"><div class="card"><h1>THE FLOOR</h1><h2>JESTINE vs JUSTIN</h2><p>This is the first Android TV remote-microphone hardware test. Each player has 45 seconds. Jestine starts. Identify the food on screen out loud. A correct answer stops your clock and starts your opponent’s. Say <b>“Pass”</b> to lose 3 seconds and receive a new image.</p><div class="rules"><span>45 SEC EACH</span><span>VOICE ONLY</span><span>1 v 1</span></div><button id="start" autofocus>START MIC TEST</button></div></div>
+<script>
+(()=>{
+'use strict';
+const Q=[['assets/food/pizza.jpg',['pizza']],['assets/food/chicken-wings.jpg',['chicken wings','wings']],['assets/food/grapes.jpg',['grapes','grape']],['assets/food/cheese.jpg',['cheese']],['assets/food/sushi.jpg',['sushi']],['assets/food/steak.jpg',['steak']],['assets/food/burger.jpg',['burger','hamburger','cheeseburger']],['assets/food/croissant.jpg',['croissant']],['assets/food/mushroom.jpg',['mushroom','mushrooms']],['assets/food/sandwich.jpg',['sandwich']],['assets/food/eggs.jpg',['eggs','egg']],['assets/food/french-fries.jpg',['french fries','fries','chips']],['assets/food/avocado.jpg',['avocado']],['assets/food/banana.jpg',['banana']],['assets/food/pineapple.jpg',['pineapple']],['assets/food/coconut.jpg',['coconut']],['assets/food/tomato.jpg',['tomato']],['assets/food/onion.jpg',['onion']],['assets/food/potato.jpg',['potato']],['assets/food/baguette.jpg',['baguette','french bread']]];
+const $=s=>document.querySelector(s);let clocks=[45,45],active=0,index=0,running=false,last=0,raf=0,locked=false,recognizer=null,audio=null;
+const norm=s=>String(s||'').toLowerCase().replace(/[^a-z0-9 ]/g,' ').replace(/\s+/g,' ').trim();
+const nativeBridge=()=>window.AndroidVoice&&typeof window.AndroidVoice.startListening==='function';
+function tone(freq,dur=.08,type='sine',gain=.12){try{audio=audio||new (window.AudioContext||window.webkitAudioContext)();const o=audio.createOscillator(),g=audio.createGain();o.type=type;o.frequency.value=freq;g.gain.value=gain;o.connect(g);g.connect(audio.destination);o.start();g.gain.exponentialRampToValueAtTime(.001,audio.currentTime+dur);o.stop(audio.currentTime+dur)}catch(e){}}
+function sfx(kind){if(kind==='correct'){tone(780,.08,'square');setTimeout(()=>tone(1040,.11,'square'),85)}else if(kind==='pass'){tone(220,.16,'sawtooth')}else if(kind==='start'){tone(440,.07,'square');setTimeout(()=>tone(660,.07,'square'),90);setTimeout(()=>tone(900,.12,'square'),180)}else if(kind==='win'){[523,659,784,1047].forEach((f,i)=>setTimeout(()=>tone(f,.18,'square',.09),i*120))}}
+function render(){for(let i=0;i<2;i++){$('#c'+i).textContent=String(Math.max(0,Math.ceil(clocks[i])));$('#p'+i).classList.toggle('active',running&&i===active);$('#c'+i).classList.toggle('danger',clocks[i]<=10)}if(running){$('#cover').hidden=true;$('#clue').hidden=false;$('#clue').src=Q[index%Q.length][0]}}
+function setVoice(msg,state=''){ $('#voice').textContent=msg;$('#mic').className='mic '+state }
+function showFlash(which){const e=$(which);e.classList.remove('show');void e.offsetWidth;e.classList.add('show')}
+function requestVoice(){if(!running||locked)return;if(nativeBridge()){setVoice('Listening to TV remote…','live');$('#native').textContent='Native Android speech';try{window.AndroidVoice.startListening()}catch(e){setVoice('Native speech start failed','error')}}else{startBrowserVoice()}}
+function stopVoice(){if(nativeBridge()){try{window.AndroidVoice.stopListening()}catch(e){}}else if(recognizer){try{recognizer.abort()}catch(e){}}$('#mic').className='mic'}
+function startBrowserVoice(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){setVoice('Speech recognition unavailable in this browser','error');$('#native').textContent='No native bridge';return}if(!recognizer){recognizer=new SR();recognizer.lang='en-AU';recognizer.interimResults=true;recognizer.continuous=false;recognizer.maxAlternatives=5;recognizer.onresult=e=>{let a=[];for(let i=e.resultIndex;i<e.results.length;i++)for(let j=0;j<e.results[i].length;j++)a.push(e.results[i][j].transcript);receiveSpeech(a,!e.results[e.results.length-1].isFinal)};recognizer.onend=()=>{if(running&&!locked)setTimeout(requestVoice,120)};recognizer.onerror=e=>{setVoice('Browser speech: '+e.error,'error');if(running&&!locked)setTimeout(requestVoice,350)}}try{recognizer.start();setVoice('Listening…','live');$('#native').textContent='Browser speech fallback'}catch(e){setTimeout(requestVoice,200)}}
+function matches(alts,answers){const A=answers.map(norm);return alts.map(norm).some(t=>A.some(a=>t===a||(t.length>=3&&(t.includes(a)||a.includes(t)))))}
+function receiveSpeech(alts,isPartial=false){if(!running||locked||!alts||!alts.length)return;const clean=alts.map(norm).filter(Boolean);if(!clean.length)return;$('#heard').textContent='HEARD: '+alts[0];if(clean.some(t=>t==='pass'||t.endsWith(' pass'))){doPass();return}if(matches(clean,Q[index%Q.length][1])){correct();return}if(!isPartial){setVoice('Not matched — keep talking','live');setTimeout(requestVoice,80)}}
+window.floorNativeSpeech={onReady(){ $('#native').textContent='Native Android speech ready' },onPermission(granted){$('#native').textContent=granted?'Mic permission granted':'Mic permission required';if(granted&&running&&!locked)setTimeout(requestVoice,100);else if(!granted)setVoice('Allow microphone permission to play','error')},onPartial(results){receiveSpeech(results,true)},onResults(results){receiveSpeech(results,false)},onError(code,message){if(!running)return;$('#heard').textContent='Speech engine: '+message;if(code===9||code===2){setVoice(message,'error')}else{setVoice('Listening…','live');if(!locked)setTimeout(requestVoice,220)}}};
+function correct(){if(locked||!running)return;locked=true;stopVoice();sfx('correct');showFlash('#correctFlash');setVoice('Correct! Clock handed over');setTimeout(()=>{index=(index+1)%Q.length;active=1-active;locked=false;render();requestVoice()},430)}
+function doPass(){if(locked||!running)return;locked=true;stopVoice();clocks[active]=Math.max(0,clocks[active]-3);sfx('pass');showFlash('#passFlash');if(clocks[active]<=0){finish(1-active);return}index=(index+1)%Q.length;render();setVoice('Pass: 3 seconds deducted');setTimeout(()=>{locked=false;requestVoice()},380)}
+function tick(t){if(!running)return;if(!last)last=t;const dt=Math.min(.1,(t-last)/1000);last=t;clocks[active]-=dt;if(clocks[active]<=0){clocks[active]=0;render();finish(1-active);return}render();raf=requestAnimationFrame(tick)}
+function start(){audio=audio||new (window.AudioContext||window.webkitAudioContext)();$('#overlay').hidden=true;running=true;active=0;clocks=[45,45];index=0;last=0;locked=false;sfx('start');render();$('#heard').textContent='Say the food shown. Say “Pass” to skip.';if(nativeBridge()){ $('#native').textContent='Native bridge detected';try{window.AndroidVoice.prepare()}catch(e){} }else requestVoice();raf=requestAnimationFrame(tick)}
+function finish(w){running=false;locked=true;cancelAnimationFrame(raf);stopVoice();sfx('win');render();const names=['JESTINE','JUSTIN'];$('#overlay').hidden=false;$('#overlay').innerHTML='<div class="card"><h2>DUEL COMPLETE</h2><div class="winner">'+names[w]+' WINS</div><p>'+names[1-w]+' ran out of time. Native microphone test complete.</p><button id="again" autofocus>PLAY AGAIN</button></div>';$('#again').addEventListener('click',()=>location.reload());$('#again').focus()}
+$('#start').addEventListener('click',start);$('#start').focus();window.addEventListener('keydown',e=>{if((e.key==='Enter'||e.keyCode===23||e.keyCode===66)&&!running&&$('#start')){$('#start').click()}});render();
+})();
+</script>
+</body>
+</html>
