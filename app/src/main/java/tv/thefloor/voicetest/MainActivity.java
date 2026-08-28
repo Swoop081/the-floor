@@ -10,7 +10,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class MainActivity extends Activity {
-    private static final String GAME_URL = "https://swoop081.github.io/the-floor/voice-test.html?v=0.3.1";
+    private static final String GAME_URL = "https://swoop081.github.io/the-floor/voice-test.html?v=0.3.2";
     private WebView webView;
     private SpeechBridge speechBridge;
 
@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
         settings.setDomStorageEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        settings.setUserAgentString(settings.getUserAgentString() + " TheFloorTV/0.3.1");
+        settings.setUserAgentString(settings.getUserAgentString() + " TheFloorTV/0.3.2");
 
         speechBridge = new SpeechBridge(this, webView);
         webView.addJavascriptInterface(speechBridge, "AndroidVoice");
@@ -44,6 +44,7 @@ public class MainActivity extends Activity {
             }
             @Override public void onPageFinished(WebView view, String url) {
                 speechBridge.pageReady();
+                view.evaluateJavascript("(function(){var e=document.getElementById('categoryLabel');if(e)e.textContent=e.textContent.replace('v0.3.0','v0.3.2');})()", null);
             }
         });
         webView.loadUrl(GAME_URL);
