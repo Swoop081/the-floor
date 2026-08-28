@@ -10,7 +10,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 public class MainActivity extends Activity {
-    private static final String GAME_URL = "https://swoop081.github.io/the-floor/voice-test.html?v=0.3.0";
+    private static final String GAME_URL = "https://swoop081.github.io/the-floor/voice-test.html?v=0.3.1";
     private WebView webView;
     private SpeechBridge speechBridge;
 
@@ -32,7 +32,7 @@ public class MainActivity extends Activity {
         settings.setDomStorageEnabled(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
         settings.setCacheMode(WebSettings.LOAD_NO_CACHE);
-        settings.setUserAgentString(settings.getUserAgentString() + " TheFloorTV/0.3.0");
+        settings.setUserAgentString(settings.getUserAgentString() + " TheFloorTV/0.3.1");
 
         speechBridge = new SpeechBridge(this, webView);
         webView.addJavascriptInterface(speechBridge, "AndroidVoice");
@@ -47,6 +47,32 @@ public class MainActivity extends Activity {
             }
         });
         webView.loadUrl(GAME_URL);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (speechBridge != null) speechBridge.hostResumed();
+        if (webView != null) webView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        if (speechBridge != null) speechBridge.hostPaused();
+        if (webView != null) webView.onPause();
+        super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        if (speechBridge != null) speechBridge.hostPaused();
+        super.onStop();
+    }
+
+    @Override
+    public void onUserLeaveHint() {
+        if (speechBridge != null) speechBridge.hostPaused();
+        super.onUserLeaveHint();
     }
 
     @Override
