@@ -47,5 +47,5 @@ jobs:
           gh release delete floor-tv-current --yes --cleanup-tag 2>/dev/null || true
           gh release delete voice-test-v0.1.0 --yes --cleanup-tag 2>/dev/null || true
           gh release create floor-tv-current The-Floor-TV.apk \
-            --title "The Floor TV v0.3.0 — Three-Category Voice Test" \
-            --notes "Jestine vs Justin Android TV voice stress-test build. Choose Food Photos, Quick Maths, or Fill the Blank. Each category runs a randomized 3-minute voice-driven session; correct answers advance and hand over to the other player, wrong answers keep the prompt live, and spoken Pass skips with a 3-second penalty. Includes native remote-mic diagnostics and persistent signing. Downloader code remains 6913823."
+            --title "The Floor TV v0.3.1 — Microphone Lifecycle Hotfix" \
+            --notes "Emergency Android TV hotfix for background microphone retention. The native speech recognizer is now cancelled on pause, stop and app-leave, and the speech bridge refuses listening/restart callbacks while The Floor is not foregrounded. Retains the v0.3.0 Jestine vs Justin three-category test. Downloader code remains 6913823."
