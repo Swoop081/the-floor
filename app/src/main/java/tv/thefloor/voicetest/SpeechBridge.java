@@ -63,6 +63,7 @@ public class SpeechBridge {
             return;
         }
         if (listening) return;
+        listening = true;
         try { recognizer.startListening(intent); }
         catch (Exception e) { listening = false; error(5, "Speech start failed"); }
     }
