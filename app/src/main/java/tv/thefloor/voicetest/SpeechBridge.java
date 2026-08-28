@@ -25,6 +25,7 @@ public class SpeechBridge {
     private final MainActivity activity;
     private final WebView webView;
     private final Handler handler = new Handler(Looper.getMainLooper());
+    private final ArrayList<String> expectedBias = new ArrayList<>();
 
     private SpeechRecognizer recognizer;
     private Intent intent;
@@ -59,7 +60,14 @@ public class SpeechBridge {
         intent.putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 8);
 
         if (Build.VERSION.SDK_INT >= 33) {
-            intent.putStringArrayListExtra(RecognizerIntent.EXTRA_BIASING_STRINGS, buildBiasStrings());
+            ArrayList<String> bias = new ArrayList<>();
+            for (String value : expectedBias) {
+                if (value != null && !value.trim().isEmpty() && !bias.contains(value.trim())) bias.add(value.trim());
+            }
+            for (String value : buildBiasStrings()) {
+                if (!bias.contains(value)) bias.add(value);
+            }
+            intent.putStringArrayListExtra(RecognizerIntent.EXTRA_BIASING_STRINGS, bias);
             intent.putExtra(RecognizerIntent.EXTRA_ENABLE_FORMATTING, RecognizerIntent.FORMATTING_OPTIMIZE_LATENCY);
             intent.putExtra(RecognizerIntent.EXTRA_HIDE_PARTIAL_TRAILING_PUNCTUATION, true);
         }
@@ -139,6 +147,21 @@ public class SpeechBridge {
             if (!hostActive) return;
             wanted = true;
             requestOrStart();
+        });
+    }
+
+    @JavascriptInterface
+    public void setExpectedAnswers(String pipeSeparated) {
+        handler.post(() -> {
+            expectedBias.clear();
+            if (pipeSeparated != null && !pipeSeparated.trim().isEmpty()) {
+                String[] parts = pipeSeparated.split("\\|");
+                for (String part : parts) {
+                    String value = part == null ? "" : part.trim();
+                    if (!value.isEmpty() && !expectedBias.contains(value)) expectedBias.add(value);
+                }
+            }
+            buildIntent();
         });
     }
 
