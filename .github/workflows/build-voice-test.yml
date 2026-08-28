@@ -47,5 +47,5 @@ jobs:
           gh release delete floor-tv-current --yes --cleanup-tag 2>/dev/null || true
           gh release delete voice-test-v0.1.0 --yes --cleanup-tag 2>/dev/null || true
           gh release create floor-tv-current The-Floor-TV.apk \
-            --title "The Floor TV v0.3.2 — TV Remote Speech Tuning" \
-            --notes "Improves Google TV remote voice recognition while retaining the v0.3.1 foreground-only microphone safety fix. Prefers Android on-device speech recognition when available, falls back to the system engine when needed, adds short-answer vocabulary biasing on supported Android versions, raises alternate hypotheses, adds rate-limit/busy cooldowns, recovers from service disconnects, and periodically rebuilds the recognizer to prevent long-session degradation. Jestine vs Justin three-category voice test retained. Downloader code remains 6913823."
+            --title "The Floor TV v0.3.3 — Visible Clues + Remote Voice Bias" \
+            --notes "Fixes the Food Photos category cover remaining over live clues and the microphone diagnostics being pushed off-screen on TV. Keeps the speech status bar visible throughout play, preserves the v0.3.1 foreground-only microphone safety kill-switch and v0.3.2 recovery tuning, and adds current-clue answer biasing for Food Photos and Quick Maths on supported Android speech engines. Jestine vs Justin three-category test retained. Downloader code remains 6913823."
