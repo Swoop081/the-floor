@@ -1,13 +1,26 @@
-# Take the Tile v0.8.1 — Prime-Time Audio Edition
+# The Floor TV
 
-Built from v0.8.0.
+Android TV / Google TV trivia game project built around fast 45-second voice-answer duels and a large-screen game-show presentation.
 
-## New in this build
-- Dedicated instruction/reveal screen before every duel.
-- Automatically explains image, maths, question, text, or mixed prompt rules.
-- Expanded procedural studio soundtrack with separate menu, board, randomizer, category reveal, suspense, duel, victory, and champion cues.
-- New randomizer ticks, selection sting, category reveal, clock-start, correct, pass, and win sound effects.
-- Stronger moving studio-light effects and broadcast-style transitions.
-- Existing 45-second clocks, three-second pass cost, voice recognition and face-down opening card are preserved.
+## Current TV Test Build
+**v0.1.0 — Jestine vs Justin Remote Mic Test**
 
-Music is generated locally with the Web Audio API, so no external audio files or streaming connections are required. Audio begins only after a user interaction, as required by iPhone browsers.
+- Player 1: Jestine
+- Player 2: Justin
+- One playable 1v1 Food duel
+- 45-second clock for each player
+- Spoken answers through Android TV speech recognition
+- Spoken **Pass** with a 3-second penalty
+- Full-screen TV presentation with live recognition diagnostics
+- Native Android TV / Google TV APK
+
+## Install with Downloader
+**Official Downloader code: `6913823`**
+
+Permanent APK destination:
+`https://github.com/Swoop081/the-floor/releases/download/floor-tv-current/The-Floor-TV.apk`
+
+The `floor-tv-current` release is the stable installation target. Future test builds can replace the APK at this same destination so the Downloader code can remain unchanged.
+
+## Current Development Direction
+The project will expand from this microphone hardware test into the full Floor-style game experience: large image-heavy categories, game-show audio and transitions, territory/floor gameplay, local contestants, 45-second head-to-head duels, voice-first answers, and Android TV remote navigation.
