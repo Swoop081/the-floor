@@ -43,5 +43,5 @@ jobs:
           gh release delete floor-tv-current --yes --cleanup-tag 2>/dev/null || true
           gh release delete voice-test-v0.1.0 --yes --cleanup-tag 2>/dev/null || true
           gh release create floor-tv-current The-Floor-TV.apk \
-            --title "The Floor TV v0.1.1 — Remote Mic Hotfix" \
-            --notes "Jestine vs Justin 1v1 Android TV hardware test. Fixes the start overlay remaining over an active duel and stabilizes repeated native speech-recognizer restarts. This build establishes the persistent test-signing baseline for future APK updates. 45-second clocks, spoken answers and spoken Pass with 3-second penalty. Stable release URL retained for Downloader code 6913823."
+            --title "The Floor TV v0.2.0 — Expanded Jestine vs Justin Duel" \
+            --notes "Single 1v1 Android TV duel only: Jestine vs Justin, Food category, 45-second clocks, 50 shuffled image clues, image preloading, 3-2-1 game-show start, clearer turn handoffs, native remote-microphone speech recognition, spoken Pass with 3-second penalty, mic diagnostics, and rematch. Stable release URL retained for Downloader code 6913823."
