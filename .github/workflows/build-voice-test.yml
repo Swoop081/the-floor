@@ -24,6 +24,11 @@ jobs:
           distribution: temurin
           java-version: '17'
       - uses: android-actions/setup-android@v3
+      - name: Restore persistent debug signing key
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/debug.keystore
+          key: floor-tv-debug-keystore-v1
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.9'
@@ -39,4 +44,4 @@ jobs:
           gh release delete voice-test-v0.1.0 --yes --cleanup-tag 2>/dev/null || true
           gh release create floor-tv-current The-Floor-TV.apk \
             --title "The Floor TV v0.1.1 — Remote Mic Hotfix" \
-            --notes "Jestine vs Justin 1v1 Android TV hardware test. Fixes the start overlay remaining over an active duel and stabilizes repeated native speech-recognizer restarts. 45-second clocks, spoken answers and spoken Pass with 3-second penalty. Stable release URL retained for Downloader code 6913823."
+            --notes "Jestine vs Justin 1v1 Android TV hardware test. Fixes the start overlay remaining over an active duel and stabilizes repeated native speech-recognizer restarts. This build establishes the persistent test-signing baseline for future APK updates. 45-second clocks, spoken answers and spoken Pass with 3-second penalty. Stable release URL retained for Downloader code 6913823."
