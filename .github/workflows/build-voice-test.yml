@@ -30,12 +30,13 @@ jobs:
       - name: Build debug APK
         run: gradle :app:assembleDebug --stacktrace
       - name: Name APK
-        run: cp app/build/outputs/apk/debug/app-debug.apk The-Floor-TV-Voice-Test-v0.1.0.apk
-      - name: Publish test release
+        run: cp app/build/outputs/apk/debug/app-debug.apk The-Floor-TV.apk
+      - name: Publish stable test release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
+          gh release delete floor-tv-current --yes --cleanup-tag 2>/dev/null || true
           gh release delete voice-test-v0.1.0 --yes --cleanup-tag 2>/dev/null || true
-          gh release create voice-test-v0.1.0 The-Floor-TV-Voice-Test-v0.1.0.apk \
+          gh release create floor-tv-current The-Floor-TV.apk \
             --title "The Floor TV v0.1.0 — Remote Mic Test" \
-            --notes "Jestine vs Justin 1v1 Android TV hardware test. 45-second clocks, native remote-microphone speech recognition, spoken answers and spoken Pass with 3-second penalty."
+            --notes "Jestine vs Justin 1v1 Android TV hardware test. 45-second clocks, native remote-microphone speech recognition, spoken answers and spoken Pass with 3-second penalty. Stable release URL retained for Downloader distribution."
