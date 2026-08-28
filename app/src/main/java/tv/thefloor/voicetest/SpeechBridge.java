@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
@@ -16,13 +17,19 @@ import java.util.ArrayList;
 
 public class SpeechBridge {
     private static final int MIC_PERMISSION = 1001;
+    private static final long MIN_RESTART_GAP_MS = 300L;
+
     private final MainActivity activity;
     private final WebView webView;
     private final Handler handler = new Handler(Looper.getMainLooper());
     private SpeechRecognizer recognizer;
     private Intent intent;
-    private boolean pendingStart;
+    private boolean pendingPermissionStart;
     private boolean listening;
+    private boolean wanted;
+    private boolean startScheduled;
+    private boolean destroyed;
+    private long lastStartAt;
 
     SpeechBridge(MainActivity activity, WebView webView) {
         this.activity = activity;
@@ -43,32 +50,67 @@ public class SpeechBridge {
     }
 
     @JavascriptInterface
-    public void prepare() { handler.post(this::requestOrStart); }
+    public void prepare() {
+        handler.post(() -> {
+            wanted = true;
+            requestOrStart();
+        });
+    }
 
     @JavascriptInterface
-    public void startListening() { handler.post(this::requestOrStart); }
+    public void startListening() {
+        handler.post(() -> {
+            wanted = true;
+            requestOrStart();
+        });
+    }
 
     @JavascriptInterface
-    public void stopListening() { handler.post(this::stop); }
+    public void stopListening() {
+        handler.post(this::stopInternal);
+    }
 
     private void requestOrStart() {
+        if (destroyed || !wanted) return;
+
         if (activity.checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            pendingStart = true;
+            pendingPermissionStart = true;
             activity.requestPermissions(new String[]{Manifest.permission.RECORD_AUDIO}, MIC_PERMISSION);
             return;
         }
+
         eval("window.floorNativeSpeech&&window.floorNativeSpeech.onPermission(true)");
         if (recognizer == null) {
-            error(2, "Speech recognizer unavailable on this TV");
+            wanted = false;
+            error(99, "Speech recognizer unavailable on this TV");
             return;
         }
-        if (listening) return;
+        if (listening || startScheduled) return;
+
+        long elapsed = SystemClock.elapsedRealtime() - lastStartAt;
+        long delay = Math.max(0L, MIN_RESTART_GAP_MS - elapsed);
+        if (delay > 0L) {
+            startScheduled = true;
+            handler.postDelayed(() -> {
+                startScheduled = false;
+                requestOrStart();
+            }, delay);
+            return;
+        }
+
         listening = true;
-        try { recognizer.startListening(intent); }
-        catch (Exception e) { listening = false; error(5, "Speech start failed"); }
+        lastStartAt = SystemClock.elapsedRealtime();
+        try {
+            recognizer.startListening(intent);
+        } catch (Exception e) {
+            listening = false;
+            error(5, "Speech start failed");
+        }
     }
 
-    private void stop() {
+    private void stopInternal() {
+        wanted = false;
+        pendingPermissionStart = false;
         if (recognizer != null) {
             try { recognizer.cancel(); } catch (Exception ignored) { }
         }
@@ -79,9 +121,12 @@ public class SpeechBridge {
         if (requestCode != MIC_PERMISSION) return;
         boolean granted = grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED;
         eval("window.floorNativeSpeech&&window.floorNativeSpeech.onPermission(" + granted + ")");
-        if (granted && pendingStart) {
-            pendingStart = false;
-            handler.postDelayed(this::requestOrStart, 150);
+        if (granted && (pendingPermissionStart || wanted)) {
+            pendingPermissionStart = false;
+            wanted = true;
+            handler.postDelayed(this::requestOrStart, 200L);
+        } else if (!granted) {
+            wanted = false;
         }
     }
 
@@ -102,7 +147,12 @@ public class SpeechBridge {
         eval("window.floorNativeSpeech&&window.floorNativeSpeech.onError(" + code + "," + quote(message) + ")");
     }
 
-    private void eval(String js) { handler.post(() -> webView.evaluateJavascript(js, null)); }
+    private void eval(String js) {
+        if (destroyed) return;
+        handler.post(() -> {
+            if (!destroyed) webView.evaluateJavascript(js, null);
+        });
+    }
 
     private String quote(String value) {
         if (value == null) value = "";
@@ -110,8 +160,13 @@ public class SpeechBridge {
     }
 
     void destroy() {
-        stop();
-        if (recognizer != null) recognizer.destroy();
+        destroyed = true;
+        wanted = false;
+        if (recognizer != null) {
+            try { recognizer.cancel(); } catch (Exception ignored) { }
+            recognizer.destroy();
+        }
+        recognizer = null;
     }
 
     private class Listener implements RecognitionListener {
@@ -122,9 +177,13 @@ public class SpeechBridge {
         @Override public void onEndOfSpeech() { }
         @Override public void onEvent(int eventType, Bundle params) { }
         @Override public void onPartialResults(Bundle partialResults) { send(partialResults, true); }
-        @Override public void onResults(Bundle results) { listening = false; send(results, false); }
+        @Override public void onResults(Bundle results) {
+            listening = false;
+            send(results, false);
+        }
         @Override public void onError(int code) {
             listening = false;
+            if (code == SpeechRecognizer.ERROR_CLIENT && !wanted) return;
             String message;
             switch (code) {
                 case SpeechRecognizer.ERROR_AUDIO: message = "Audio input error"; break;
